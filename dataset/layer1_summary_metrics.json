@@ -1,0 +1,44 @@
+{
+  "summary": {
+    "python": {
+      "total_tasks": 285249,
+      "total_snippets": 1140996,
+      "ingestion_time_sec": 63.08,
+      "outlier_score_mean": 0.5519,
+      "outlier_score_std": 0.2756,
+      "outlier_score_median": 0.5055,
+      "outlier_score_min": 0.0056,
+      "outlier_score_max": 1.7088,
+      "outlier_score_p90": 0.943,
+      "outlier_score_p95": 1.0856,
+      "outlier_score_p99": 1.3379,
+      "avg_char_length": {
+        "human": 647.05,
+        "chatgpt": 377.47,
+        "deepseek": 403.66,
+        "qwen": 485.1
+      }
+    },
+    "java": {
+      "total_tasks": 221796,
+      "total_snippets": 887184,
+      "ingestion_time_sec": 50.16,
+      "outlier_score_mean": 0.5196,
+      "outlier_score_std": 0.2567,
+      "outlier_score_median": 0.4915,
+      "outlier_score_min": 0.0046,
+      "outlier_score_max": 1.7164,
+      "outlier_score_p90": 0.856,
+      "outlier_score_p95": 0.993,
+      "outlier_score_p99": 1.284,
+      "avg_char_length": {
+        "human": 609.27,
+        "chatgpt": 449.86,
+        "deepseek": 461.8,
+        "qwen": 404.43
+      }
+    }
+  },
+  "sample_count": 3000,
+  "total_time_sec": 115.66
+}
