@@ -1,4 +1,4 @@
-# Zero-Shot LLM Code Synthesis vs. Production-Hardened Human Reference Code: A Stylometric and Structural Case Study
+# Brevity Is Not All You Need: A Stylometric and Structural Case Study of Zero-Shot LLM Code Synthesis vs. Production-Hardened Human Reference Code
 
 **Author**: Hassan Elkady  
 **Affiliation**: Computer Engineering Student, Arab Academy for Science, Technology and Maritime Transport (AAST)  
@@ -13,6 +13,19 @@ Evaluating Large Language Model (LLM) code generation typically focuses on funct
 Quantitative analysis demonstrates statistically significant stylometric divergence: frontier synthetic implementations exhibit **+297% lines of code (LOC) expansion** ($\text{Mean} = 59.62 \pm 27.67$ LOC vs. $15.00 \pm 6.78$ LOC human, Mann-Whitney $U = 22.5$, Holm-Bonferroni adjusted $p_{\text{adj}} = 9.04 \times 10^{-6}$, rank-biserial effect size $r_{\text{rb}} = +0.941$), elevated comment density ($13.73\% \pm 11.47\%$ synthetic vs. $1.43\% \pm 4.52\%$ human, $p_{\text{adj}} = 0.0019$, $r_{\text{rb}} = +0.686$), higher explicit type annotation density ($13.13 \pm 11.72$ vs $1.50 \pm 1.35$, $p_{\text{adj}} = 0.0004$, $r_{\text{rb}} = +0.774$), and higher vertical whitespace ratios ($17.47\% \pm 4.88\%$ synthetic vs. $5.54\% \pm 6.95\%$ human, $p_{\text{adj}} = 0.0002$, $r_{\text{rb}} = +0.812$). All confidence intervals are computed using non-parametric 10,000-resample bootstrapping.
 
 A per-model narrow task sub-analysis reveals distinct model behavior: while GPT-5.6 Sol ($32.00 \pm 19.76$ LOC, $p_{\text{adj}} = 0.0401$) and Gemini 3.5 Flash ($34.57 \pm 6.97$ LOC, $p_{\text{adj}} = 0.0002$) contract significantly on narrow tasks, Claude Sonnet 4.6 remains highly verbose ($63.14 \pm 27.53$ LOC, $p_{\text{adj}} = 0.0079$) due to embedded unit test harnesses and rich type declarations.
+
+---
+
+## Glossary of Technical & Statistical Terms for General Readers
+
+To ensure accessibility for non-specialist readers, key statistical terms used in this study are defined as follows:
+- **Lines of Code (LOC)**: The total count of executable and structural code lines, excluding blank lines.
+- **Mann-Whitney $U$ Test**: A statistical test that compares two independent groups without assuming their data follows a standard bell curve.
+- **Holm-Bonferroni FWER Correction ($p_{\text{adj}}$)**: A statistical procedure that adjusts $p$-values to prevent false positive discoveries when conducting multiple statistical comparisons simultaneously.
+- **Rank-Biserial Correlation ($r_{\text{rb}}$)**: A measure of effect size (ranging from $-1.0$ to $+1.0$) indicating how strongly values in one group exceed values in another.
+- **Bootstrap 95% Confidence Interval**: A computational resampling method that determines upper and lower uncertainty bounds by repeatedly sampling data 10,000 times.
+- **Kruskal-Wallis $H$-Test**: A statistical test evaluating whether three or more independent model families differ significantly from one another.
+- **Structural Micro-Fragmentation**: The tendency of synthetic code models to decompose simple task logic into multiple helper sub-functions or auxiliary class wrappers.
 
 ---
 

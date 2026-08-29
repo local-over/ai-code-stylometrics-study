@@ -1,4 +1,4 @@
-# Zero-Shot LLM Code Synthesis vs. Production-Hardened Human Reference Code: A Stylometric and Structural Case Study
+# Brevity Is Not All You Need: A Stylometric and Structural Case Study of Zero-Shot LLM Code Synthesis vs. Production-Hardened Human Reference Code
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Dataset: 136 Programs](https://img.shields.io/badge/Dataset-136%20Programs-emerald.svg)](dataset/)
@@ -15,6 +15,18 @@
 Evaluating Large Language Model (LLM) code generation typically focuses on functional pass rates (e.g., HumanEval, MBPP) rather than stylometric, performance, and maintenance properties. 
 
 This repository contains the dataset, reproduction scripts, and formal research paper for an empirical case study evaluating **76 zero-shot synthetic code generations** produced by three frontier LLM architectures (**Google Gemini 3.5 Flash**, **OpenAI GPT-5.6 Sol**, and **Anthropic Claude Sonnet 4.6**) against a reference baseline of 10 production-hardened standard library functions authored by senior human engineers prior to the LLM era (2017–2018 reference code from React 16, Go 1.10, Redis 5.0, Linux Kernel 4.14, Rust stdlib, PyTorch 1.0, and FastHTTP). In addition, we evaluate an auxiliary secondary benchmark of 50 pilot recreation generations produced by Gemini 3.5 Flash across the 10 human prompt tasks (5 runs per prompt).
+
+---
+
+## 📖 Glossary of Technical & Statistical Terms for General Readers
+
+- **Lines of Code (LOC)**: The total count of executable and structural code lines, excluding blank lines.
+- **Mann-Whitney $U$ Test**: A non-parametric statistical test that compares two independent groups without assuming a bell-curve distribution.
+- **Holm-Bonferroni FWER Correction ($p_{\text{adj}}$)**: A statistical procedure adjusting $p$-values to prevent false positive discoveries during multiple comparisons.
+- **Rank-Biserial Correlation ($r_{\text{rb}}$)**: An effect size metric ($-1.0$ to $+1.0$) indicating how strongly one group's values exceed another.
+- **Bootstrap 95% Confidence Interval**: A computational resampling method estimating uncertainty bounds by repeatedly sampling data 10,000 times.
+- **Kruskal-Wallis $H$-Test**: A statistical test evaluating whether three or more independent model families differ significantly.
+- **Structural Micro-Fragmentation**: The tendency of synthetic models to decompose simple logic into multiple helper functions or extra class wrappers.
 
 ---
 
@@ -110,8 +122,8 @@ ai_code_stylometrics_study/
 If you use this dataset or research in your work, please cite:
 
 ```bibtex
-@article{elkady2026zeroshotllm,
-  title={Zero-Shot LLM Code Synthesis vs. Production-Hardened Human Reference Code: A Stylometric and Structural Case Study},
+@article{elkady2026brevityisnotall,
+  title={Brevity Is Not All You Need: A Stylometric and Structural Case Study of Zero-Shot LLM Code Synthesis vs. Production-Hardened Human Reference Code},
   author={Elkady, Hassan},
   institution={Arab Academy for Science, Technology and Maritime Transport (AAST)},
   year={2026},
