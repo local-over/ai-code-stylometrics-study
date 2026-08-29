@@ -10,11 +10,11 @@
 
 The rapid adoption of Large Language Models (LLMs) for automated code synthesis has sparked interest in evaluating the structural and qualitative properties of machine-generated code. Existing benchmarks often focus strictly on functional pass rates (e.g., HumanEval, MBPP) rather than stylometric, performance, and maintenance characteristics. 
 
-This paper presents an empirical case study evaluating **76 zero-shot synthetic code generations** produced by three frontier LLM architectures (*Google Gemini 3.5 Flash*, *OpenAI GPT-5.6 Sol*, and *Anthropic Claude Sonnet 4.6*) against a reference baseline of 10 production-hardened standard library functions authored by prominent human engineers prior to the LLM era (2017–2018 code from React 16, Go 1.10, Redis 5.0, Linux Kernel 4.14, Rust stdlib, PyTorch 1.0, and FastHTTP). In addition, we evaluate an auxiliary secondary benchmark of 50 pre-generated AI recreations.
+This paper presents an empirical case study evaluating **76 zero-shot synthetic code generations** produced by three frontier LLM architectures (*Google Gemini 3.5 Flash*, *OpenAI GPT-5.6 Sol*, and *Anthropic Claude Sonnet 4.6*) against a reference baseline of 10 production-hardened standard library functions authored by prominent human engineers prior to the LLM era (2017–2018 code from React 16, Go 1.10, Redis 5.0, Linux Kernel 4.14, Rust stdlib, PyTorch 1.0, and FastHTTP). In addition, we evaluate an auxiliary secondary benchmark of 50 pilot recreation generations produced by Gemini 3.5 Flash across the 10 human prompt tasks (5 runs per prompt).
 
 Our quantitative analysis reveals statistically significant stylometric divergence: frontier synthetic implementations exhibit **+297% lines of code (LOC) expansion** ($\text{Mean} = 59.62 \pm 27.67$ LOC vs. $15.00 \pm 6.78$ LOC human, Mann-Whitney $U = 22.5$, Holm-Bonferroni $p_{\text{adj}} = 9.04 \times 10^{-6}$, rank-biserial effect size $r_{\text{rb}} = +0.941$), elevated comment density ($13.73\% \pm 11.47\%$ synthetic vs. $1.43\% \pm 4.52\%$ human, $p_{\text{adj}} = 0.0019$, $r_{\text{rb}} = +0.686$), higher explicit type annotation density ($13.13 \pm 11.72$ vs $1.50 \pm 1.35$, $p_{\text{adj}} = 0.0004$, $r_{\text{rb}} = +0.774$), and higher vertical whitespace ratios ($17.47\% \pm 4.88\%$ synthetic vs. $5.54\% \pm 6.95\%$ human, $p_{\text{adj}} = 0.0002$, $r_{\text{rb}} = +0.812$). All confidence intervals are computed via non-parametric 10,000-resample bootstrapping.
 
-An intra-model task-complexity evaluation across the 76 frontier generations demonstrates that code length is strongly task-scope dependent: frontier models generating code for complex, multi-step tasks average $70.44 \pm 25.29$ LOC compared to $41.07 \pm 21.17$ LOC on focused tasks ($U = 247.0, p = 4.82 \times 10^{-6}$). Furthermore, on narrow single-function benchmark prompts, no statistically significant difference was detected between synthetic outputs and human code ($p = 0.5176$), demonstrating that synthetic LOC volume scales directly with prompt scope and structural micro-fragmentation (**89.5%** occurrence in frontier tasks).
+An intra-model task-complexity evaluation across the 76 frontier generations demonstrates that code length is strongly task-scope dependent: frontier models generating code for complex, multi-step tasks average $70.44 \pm 25.29$ LOC compared to $41.07 \pm 21.17$ LOC on focused tasks ($U = 247.0, p = 4.82 \times 10^{-6}$). Furthermore, on narrow single-function benchmark prompts, no statistically significant difference was detected between the auxiliary synthetic recreation set and human reference code ($p = 0.5176$), demonstrating that synthetic LOC volume scales directly with prompt scope and structural micro-fragmentation (**89.5%** occurrence in primary frontier tasks).
 
 ---
 
@@ -24,7 +24,7 @@ Automated code generation powered by Large Language Models (LLMs) has transition
 
 A central open question in automated software engineering is how zero-shot machine-generated code structurally differs from hardened human-written software. When tasked with writing code, LLMs sample token probability distributions shaped by public code repositories, Q&A forums, and educational tutorials. This statistical process creates distinct structural and visual signatures.
 
-This paper presents an empirical comparative analysis of human reference code versus zero-shot LLM code across **76 primary frontier model generations** and **10 pre-AI reference flows**, supported by an auxiliary secondary dataset of 50 AI recreations (total dataset $N=136$).
+This paper presents an empirical comparative analysis of human reference code versus zero-shot LLM code across **76 primary frontier model generations** and **10 pre-AI reference flows**, supported by an auxiliary secondary dataset of 50 pilot recreation runs (total dataset $N=136$).
 
 ---
 
@@ -63,11 +63,11 @@ We queried three frontier LLM architectures via stateless OpenRouter API calls u
 - **Uneven $N$ Allocation Methodological Rationale**: Because Gemini 3.5 Flash features a lower OpenRouter per-token pricing structure ($1.50/1M prompt, $9.00/1M completion) relative to GPT-5.6 Sol ($2.00/1M prompt, $10.00/1M completion) and Claude Sonnet 4.6 ($3.00/1M prompt, $15.00/1M completion), Gemini was allocated two independent runs per task-language pair ($N=38$), while GPT-5.6 Sol ($N=19$) and Claude Sonnet 4.6 ($N=19$) were allocated one run per pair to maximize dataset volume within fixed API spending constraints.
 - **Inter-Task and Inter-Model Variance**: Under `temperature = 0.0`, single-shot API outputs for a specific `(model, task)` pair are deterministic. The reported sample standard deviation ($\text{SD} = 27.67$ LOC) reflects **inter-task variance across 14 diverse algorithmic problems** and **inter-model variance across 3 model families**.
 
-### 3.3 Dataset Breakdown & Exact Reconciliation ($N=136$ Total Records)
-To ensure 100% arithmetic transparency:
+### 3.3 Dataset Breakdown & Auxiliary Dataset Provenance ($N=136$ Total Records)
+To ensure 100% arithmetic transparency and dataset provenance:
 - **Human Reference Baseline ($n=10$)**: 10 pre-AI reference library functions.
 - **Primary Frontier LLM Dataset ($N=76$)**: 76 zero-shot OpenRouter generations across Gemini ($N=38$), GPT ($N=19$), and Claude ($N=19$) across 14 tasks in Python and JavaScript.
-- **Secondary AI Benchmark Recreations ($N=50$)**: 50 pre-generated AI recreations (5 versions per prompt) produced for the 10 human benchmark prompts.
+- **Secondary Auxiliary AI Recreations ($N=50$)**: 50 pre-generated pilot recreation runs generated by Google Gemini 3.5 Flash (5 independent recreation runs per benchmark prompt for `flow_01`–`flow_10`) during initial baseline benchmarking.
 - **Total Dataset**: $10 + 76 + 50 = 136\text{ Master Records}$.
 
 ---
@@ -99,16 +99,16 @@ To evaluate inter-model differences across LLM providers, we report per-model me
 | **Kruskal-Wallis $H$-test** | — | $H = 8.93, \mathbf{p = 0.0115}$ | $H = 43.50, \mathbf{p = 3.58 \times 10^{-10}}$ | $H = 4.98, p = 0.0829$ | $H = 0.92, p = 0.6316$ |
 
 ### 4.3 Task Complexity Evaluation: Short vs. Complex Tasks Within Frontier LLMs ($N=76$)
-To isolate whether code bloat is driven by model behavior or task scope, we partitioned the 76 frontier generations by task complexity:
+To isolate whether code bloat is driven by model behavior or task scope, we partitioned the 76 frontier generations across Gemini, GPT, and Claude by task complexity:
 - **Focused / Short Tasks ($N=28$)** (CSV Email, Interval Merge, Rotated Binary Search, Bracket Validation): $\text{Mean LOC} = 41.07 \pm 21.17$ LOC.
 - **Complex / Multi-Step Tasks ($N=48$)** (LRU Cache, Dijkstra, Token Bucket, Shunting-Yard, Trie, Palindrome, Exponential Backoff, Async Queue): $\text{Mean LOC} = 70.44 \pm 25.29$ LOC.
 - **Mann-Whitney U Test**: $U = 247.0, \mathbf{p = 4.82 \times 10^{-6}}$ (Rank-biserial effect size $r_{\text{rb}} = +0.632$).
 - **Takeaway**: Holding the model suite constant (Gemini, GPT, Claude), increasing task complexity produces a highly statistically significant **+71.5% LOC expansion ($p < 0.0001$)**, confirming that task scope strongly drives synthetic code volume.
 
-### 4.4 Secondary Benchmark Study: Human Reference ($n=10$) vs. AI Recreations ($N=50$)
-Separately from the primary frontier model evaluations, we evaluated an auxiliary dataset of 50 pre-generated AI recreations (5 versions per prompt for `flow_01`–`flow_10`). Synthetic outputs averaged $13.14 \pm 5.21$ LOC and $2.39\% \pm 6.21\%$ comment density. 
+### 4.4 Secondary Auxiliary Study: Human Reference ($n=10$) vs. Gemini Pilot Recreations ($N=50$)
+Separately from the primary frontier model evaluations, we evaluated an auxiliary dataset of 50 pilot recreation generations produced by Google Gemini 3.5 Flash (5 independent runs per prompt for `flow_01`–`flow_10`). Synthetic outputs averaged $13.14 \pm 5.21$ LOC and $2.39\% \pm 6.21\%$ comment density. 
 
-A Mann-Whitney U test between the human reference functions ($n=10$) and the benchmark recreations ($N=50$) yielded $p = 0.5176$ ($\text{LOC } U = 283.0$). **Statistical Power Note**: We emphasize that a non-significant $p$-value ($p > 0.05$) does not prove statistical equivalence, particularly given the modest statistical power of a small human reference sample ($n=10$). Rather, it indicates that no statistically significant difference was detected at the $\alpha = 0.05$ level, showing that on narrow single-function prompts, synthetic code does not exhibit the multi-fold LOC expansion observed in broad task synthesis.
+A Mann-Whitney U test between the human reference functions ($n=10$) and the auxiliary Gemini recreations ($N=50$) yielded $p = 0.5176$ ($\text{LOC } U = 283.0$). **Statistical Power Note**: We emphasize that a non-significant $p$-value ($p > 0.05$) does not prove statistical equivalence, particularly given the modest statistical power of a small human reference sample ($n=10$). Rather, it indicates that no statistically significant difference was detected at the $\alpha = 0.05$ level between the human baseline and the auxiliary Gemini recreation set on narrow single-function prompts.
 
 ---
 
@@ -140,7 +140,7 @@ We evaluated the empirical occurrence count ($k$) of seven structural patterns a
 | **Pattern 6** | **Asynchronous State & Timer Lifecycle Leaks**: Omitting `clearTimeout()` or mutating subscriber lists live.** | **0 / 76\*\*** | **0 / 126\*\*** | **0.0%\*\*** |
 | **Pattern 7** | **Compiler Vectorization Obstacles**: Using nested `std::min(std::max(...))` template calls that hinder SIMD auto-vectorization. | **0 / 76** | **1 / 126** | **0.0%** |
 
-*\*Note on Pattern 2*: Contextual invariant omissions occurred specifically in the benchmark recreation tasks (`flow_02` shallowEqual, `flow_03` Go Builder), scoring 6/50 (12.0%) in the benchmark recreation dataset.  
+*\*Note on Pattern 2*: Contextual invariant omissions occurred specifically in the auxiliary benchmark recreation tasks (`flow_02` shallowEqual, `flow_03` Go Builder), scoring 6/50 (12.0%) in the auxiliary recreation dataset.  
 \*\**Note on Pattern 6*: Scored 0/126 in the quantitative dataset because Tier 2 async tasks (`task_12` Event Emitter and `task_14` TTL Cache) were skipped when OpenRouter API calls reached the hard payment budget limit.
 
 ---
