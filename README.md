@@ -37,9 +37,9 @@ Evaluated via Mann-Whitney U test with Holm-Bonferroni FWER correction, non-para
 
 ## 🔬 Per-Model Narrow Task Sub-Analysis
 
-Testing each of the three frontier models individually on narrow tasks (`task_02`, `task_08`, `task_09`, `task_10`) against the human baseline ($n=10, 15.00 \pm 6.78$ LOC):
+Testing each of the three frontier models individually on narrow task prompt runs against the human baseline ($n=10, 15.00 \pm 6.78$ LOC). The 28 narrow task runs encompass **4 distinct algorithmic categories** evaluated across language pairs (**7 task-language prompt pairs** for 1-run models GPT and Claude: 3 tasks $\times$ 2 languages + 1 task $\times$ 1 language = 7 prompt runs; and **14 prompt runs** for Gemini due to 2 runs per pair): CSV Email Line Parser (`task_02`, Py/JS), Overlapping Intervals Merge (`task_08`, Py/JS), Rotated Sorted Array Binary Search (`task_09`, Py/JS), and Balanced Bracket Sequence Validation (`task_10`, Py):
 
-| Model | Narrow Task Count ($N$) | Mean Narrow LOC ($\pm \text{SD}$) | Mann-Whitney $U$ | Raw $p$-value | Holm-Bonferroni $p_{\text{adj}}$ | Significance vs Human Baseline |
+| Model | Narrow Task Prompt Count ($N$) | Mean Narrow LOC ($\pm \text{SD}$) | Mann-Whitney $U$ | Raw $p$-value | Holm-Bonferroni $p_{\text{adj}}$ | Significance vs Human Baseline |
 |---|---|---|---|---|---|---|
 | **OpenAI GPT-5.6 Sol** | $N=7$ | $32.00 \pm 19.76$ | 13.5 | $p = 0.0401$ | **$p_{\text{adj}} = 0.0401$** | **Significant ($p < 0.05$)** |
 | **Google Gemini 3.5 Flash** | $N=14$ | $34.57 \pm 6.97$ | 2.0 | $p = 7.57 \times 10^{-5}$ | **$p_{\text{adj}} = 0.0002$** | **Significant ($p < 0.01$)** |
