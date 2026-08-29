@@ -12,9 +12,9 @@
 
 ## 📌 Abstract
 
-The rapid adoption of Large Language Models (LLMs) for automated code synthesis has sparked interest in evaluating the structural and qualitative properties of machine-generated code. Existing benchmarks often focus strictly on functional pass rates (e.g., HumanEval, MBPP) rather than stylometric, performance, and maintenance characteristics. 
+Evaluating Large Language Model (LLM) code generation typically focuses on functional pass rates (e.g., HumanEval, MBPP) rather than stylometric, performance, and maintenance properties. 
 
-This repository contains the dataset, reproduction scripts, and formal research paper for an empirical case study evaluating **76 zero-shot synthetic code generations** produced by three frontier LLM architectures (**Google Gemini 3.5 Flash**, **OpenAI GPT-5.6 Sol**, and **Anthropic Claude Sonnet 4.6**) against a reference baseline of 10 production-hardened standard library functions authored by prominent human engineers prior to the LLM era (2017–2018 reference code from React 16, Go 1.10, Redis 5.0, Linux Kernel 4.14, Rust stdlib, PyTorch 1.0, and FastHTTP). In addition, we evaluate an auxiliary secondary benchmark of 50 pilot recreation generations produced by Gemini 3.5 Flash across the 10 human prompt tasks (5 runs per prompt).
+This repository contains the dataset, reproduction scripts, and formal research paper for an empirical case study evaluating **76 zero-shot synthetic code generations** produced by three frontier LLM architectures (**Google Gemini 3.5 Flash**, **OpenAI GPT-5.6 Sol**, and **Anthropic Claude Sonnet 4.6**) against a reference baseline of 10 production-hardened standard library functions authored by senior human engineers prior to the LLM era (2017–2018 reference code from React 16, Go 1.10, Redis 5.0, Linux Kernel 4.14, Rust stdlib, PyTorch 1.0, and FastHTTP). In addition, we evaluate an auxiliary secondary benchmark of 50 pilot recreation generations produced by Gemini 3.5 Flash across the 10 human prompt tasks (5 runs per prompt).
 
 ---
 
@@ -30,6 +30,13 @@ Evaluated via Mann-Whitney U test with Holm-Bonferroni FWER correction, non-para
 | **Helper Method Count** | $0.00 \pm 0.00$ [0.0, 0.0] | $1.25 \pm 2.46$ [0.7, 1.8] | 260.0 | $p = 0.0416$ | $p_{\text{adj}} = 0.0832$ | **$r_{\text{rb}} = +0.316$** (Medium) | Marginally Significant |
 | **Return Statement Count** | $1.70 \pm 1.49$ [0.9, 2.6] | $3.16 \pm 2.31$ [2.7, 3.7] | 219.0 | $p = 0.0272$ | $p_{\text{adj}} = 0.0816$ | **$r_{\text{rb}} = +0.424$** (Med-Large) | Marginally Significant |
 | **Vertical Whitespace (%)** | $5.54\% \pm 6.95\%$ [1.8, 9.8] | $17.47\% \pm 4.88\%$ [16.4, 18.5] | 71.5 | $p = 3.32 \times 10^{-5}$ | **$p_{\text{adj}} = 0.0002$** | **$r_{\text{rb}} = +0.812$** (Massive) | **Significant ($p < 0.01$)** |
+
+```
+Human Reference (n=10)   : [15.0 LOC] █
+GPT-5.6 Sol (N=19)       : [54.2 LOC] ███████▌
+Gemini 3.5 Flash (N=38)  : [55.4 LOC] ███████▋
+Claude Sonnet 4.6 (N=19) : [73.5 LOC] ██████████
+```
 
 ---
 
