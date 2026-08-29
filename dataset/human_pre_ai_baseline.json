@@ -1,0 +1,182 @@
+[
+  {
+    "id": "sample_2017_01",
+    "category": "Data Structures & Task Scheduling",
+    "title": "React 16 Fiber Scheduler Min-Heap Sift-Up (push / siftUp)",
+    "language": "JavaScript",
+    "source_project": "Facebook React (Andrew Clark / Dan Abramov)",
+    "pre_ai_date": "2018 (React 16.5 - Pre-LLM Era)",
+    "source_file": "packages/scheduler/src/SchedulerMinHeap.js",
+    "english_prompt": "Write a JavaScript function `push(heap, node)` that inserts a task `node` (object with a numerical `sortIndex` and `id`) into a min-heap array `heap` and sifts it up to maintain the min-heap invariant. When `sortIndex` values are equal, use the lower `id` as the tie-breaker.",
+    "human_pre_ai_code": "function push(heap, node) {\n  const index = heap.length;\n  heap.push(node);\n  siftUp(heap, node, index);\n}\n\nfunction siftUp(heap, node, i) {\n  let index = i;\n  while (index > 0) {\n    const parentIndex = (index - 1) >>> 1;\n    const parent = heap[parentIndex];\n    if (compare(parent, node) > 0) {\n      heap[parentIndex] = node;\n      heap[index] = parent;\n      index = parentIndex;\n    } else {\n      return;\n    }\n  }\n}\n\nfunction compare(a, b) {\n  const diff = a.sortIndex - b.sortIndex;\n  return diff !== 0 ? diff : a.id - b.id;\n}",
+    "ai_versions": {
+      "version_1": "function push(heap, node) {\n  heap.push(node);\n  let index = heap.length - 1;\n\n  while (index > 0) {\n    const parentIndex = Math.floor((index - 1) / 2);\n    const parent = heap[parentIndex];\n\n    const isSmaller = \n      node.sortIndex < parent.sortIndex || \n      (node.sortIndex === parent.sortIndex && node.id < parent.id);\n\n    if (isSmaller) {\n      heap[parentIndex] = node;\n      heap[index] = parent;\n      index = parentIndex;\n    } else {\n      break;\n    }\n  }\n}",
+      "version_2": "function push(heap, node) {\n  let i = heap.length;\n  heap.push(node);\n\n  while (i > 0) {\n    const parent = (i - 1) >> 1;\n    if (compareNodes(heap[parent], node) > 0) {\n      heap[i] = heap[parent];\n      heap[parent] = node;\n      i = parent;\n    } else {\n      break;\n    }\n  }\n}\n\nfunction compareNodes(a, b) {\n  if (a.sortIndex !== b.sortIndex) {\n    return a.sortIndex - b.sortIndex;\n  }\n  return a.id - b.id;\n}",
+      "version_3": "function push(heap, node) {\n  heap.push(node);\n  let childIdx = heap.length - 1;\n\n  while (childIdx > 0) {\n    let parentIdx = Math.floor((childIdx - 1) / 2);\n    let child = heap[childIdx];\n    let parent = heap[parentIdx];\n\n    let shouldSwap = false;\n    if (child.sortIndex < parent.sortIndex) {\n      shouldSwap = true;\n    } else if (child.sortIndex === parent.sortIndex && child.id < parent.id) {\n      shouldSwap = true;\n    }\n\n    if (shouldSwap) {\n      heap[parentIdx] = child;\n      heap[childIdx] = parent;\n      childIdx = parentIdx;\n    } else {\n      break;\n    }\n  }\n}",
+      "version_4": "function push(heap, node) {\n  heap.push(node);\n  let curr = heap.length - 1;\n\n  while (curr > 0) {\n    const p = (curr - 1) >>> 1;\n    const pNode = heap[p];\n\n    const cmp = node.sortIndex - pNode.sortIndex || node.id - pNode.id;\n    if (cmp < 0) {\n      heap[curr] = pNode;\n      heap[p] = node;\n      curr = p;\n    } else {\n      break;\n    }\n  }\n}",
+      "version_5": "function push(heap, node) {\n  let pos = heap.length;\n  heap.push(node);\n\n  while (pos > 0) {\n    let parent = (pos - 1) >> 1;\n    let pNode = heap[parent];\n    \n    if (node.sortIndex < pNode.sortIndex || (node.sortIndex === pNode.sortIndex && node.id < pNode.id)) {\n      heap[pos] = pNode;\n      heap[parent] = node;\n      pos = parent;\n    } else {\n      break;\n    }\n  }\n}"
+    }
+  },
+  {
+    "id": "sample_2017_02",
+    "category": "DOM & UI Reconciliation",
+    "title": "React 16 Shallow Property Comparator (shallowEqual)",
+    "language": "JavaScript",
+    "source_project": "Facebook React (Dan Abramov)",
+    "pre_ai_date": "2017 (React 16 Core - Pre-LLM Era)",
+    "source_file": "packages/shared/shallowEqual.js",
+    "english_prompt": "Write a JavaScript function `shallowEqual(objA, objB)` that checks if two objects `objA` and `objB` are shallowly equal. Use `Object.is` for value comparisons, verify matching keys count, and ensure every key in `objA` exists in `objB` with identical value.",
+    "human_pre_ai_code": "function shallowEqual(objA, objB) {\n  if (Object.is(objA, objB)) {\n    return true;\n  }\n\n  if (typeof objA !== 'object' || objA === null || typeof objB !== 'object' || objB === null) {\n    return false;\n  }\n\n  const keysA = Object.keys(objA);\n  const keysB = Object.keys(objB);\n\n  if (keysA.length !== keysB.length) {\n    return false;\n  }\n\n  for (let i = 0; i < keysA.length; i++) {\n    if (!Object.prototype.hasOwnProperty.call(objB, keysA[i]) || !Object.is(objA[keysA[i]], objB[keysA[i]])) {\n      return false;\n    }\n  }\n\n  return true;\n}",
+    "ai_versions": {
+      "version_1": "function shallowEqual(objA, objB) {\n  if (Object.is(objA, objB)) return true;\n\n  if (typeof objA !== 'object' || objA === null ||\n      typeof objB !== 'object' || objB === null) {\n    return false;\n  }\n\n  const keysA = Object.keys(objA);\n  const keysB = Object.keys(objB);\n\n  if (keysA.length !== keysB.length) return false;\n\n  for (const key of keysA) {\n    if (!Object.prototype.hasOwnProperty.call(objB, key) || !Object.is(objA[key], objB[key])) {\n      return false;\n    }\n  }\n\n  return true;\n}",
+      "version_2": "function shallowEqual(objA, objB) {\n  if (objA === objB) return true;\n\n  if (!objA || !objB || typeof objA !== 'object' || typeof objB !== 'object') {\n    return false;\n  }\n\n  const keysA = Object.keys(objA);\n  const keysB = Object.keys(objB);\n\n  if (keysA.length !== keysB.length) return false;\n\n  const hasOwn = Object.prototype.hasOwnProperty;\n  return keysA.every(key => hasOwn.call(objB, key) && Object.is(objA[key], objB[key]));\n}",
+      "version_3": "function shallowEqual(objA, objB) {\n  if (Object.is(objA, objB)) {\n    return true;\n  }\n\n  if (objA === null || objB === null || typeof objA !== 'object' || typeof objB !== 'object') {\n    return false;\n  }\n\n  const keysA = Object.keys(objA);\n  const keysB = Object.keys(objB);\n\n  if (keysA.length !== keysB.length) {\n    return false;\n  }\n\n  for (let i = 0; i < keysA.length; i++) {\n    const key = keysA[i];\n    if (!objB.hasOwnProperty(key) || !Object.is(objA[key], objB[key])) {\n      return false;\n    }\n  }\n\n  return true;\n}",
+      "version_4": "function shallowEqual(a, b) {\n  if (Object.is(a, b)) return true;\n  if (typeof a !== 'object' || a === null || typeof b !== 'object' || b === null) {\n    return false;\n  }\n\n  const ka = Object.keys(a);\n  const kb = Object.keys(b);\n\n  if (ka.length !== kb.length) return false;\n\n  for (let k of ka) {\n    if (!Object.prototype.hasOwnProperty.call(b, k) || !Object.is(a[k], b[k])) {\n      return false;\n    }\n  }\n  return true;\n}",
+      "version_5": "function shallowEqual(objA, objB) {\n  if (Object.is(objA, objB)) return true;\n\n  if (objA === null || typeof objA !== 'object' || objB === null || typeof objB !== 'object') {\n    return false;\n  }\n\n  const keysA = Object.keys(objA);\n  const keysB = Object.keys(objB);\n\n  if (keysA.length !== keysB.length) return false;\n\n  const hasOwnProperty = Object.prototype.hasOwnProperty;\n  for (let i = 0; i < keysA.length; i++) {\n    const key = keysA[i];\n    if (!hasOwnProperty.call(objB, key) || !Object.is(objA[key], objB[key])) {\n      return false;\n    }\n  }\n  return true;\n}"
+    }
+  },
+  {
+    "id": "sample_2017_03",
+    "category": "Systems & Buffer Management",
+    "title": "Go 1.10 strings.Builder String Concatenation (WriteString)",
+    "language": "Go",
+    "source_project": "Go Standard Library (Russ Cox / Brad Fitzpatrick)",
+    "pre_ai_date": "2018 (Go 1.10 - Pre-LLM Era)",
+    "source_file": "src/strings/builder.go",
+    "english_prompt": "Write a Go method `(b *Builder) WriteString(s string) (int, error)` on a struct `Builder` (wrapping a `buf []byte` slice) that appends string `s` to the internal buffer byte slice `b.buf` and returns the number of bytes written `len(s)` along with a `nil` error.",
+    "human_pre_ai_code": "type Builder struct {\n\taddr *Builder\n\tbuf  []byte\n}\n\nfunc (b *Builder) WriteString(s string) (int, error) {\n\tb.copyCheck()\n\tb.buf = append(b.buf, s...)\n\treturn len(s), nil\n}\n\nfunc (b *Builder) copyCheck() {\n\tif b.addr == nil {\n\t\tb.addr = b\n\t} else if b.addr != b {\n\t\tpanic(\"strings: illegal use of non-zero Builder copied by value\")\n\t}\n}",
+    "ai_versions": {
+      "version_1": "type Builder struct {\n\tbuf []byte\n}\n\nfunc (b *Builder) WriteString(s string) (int, error) {\n\tb.buf = append(b.buf, s...)\n\treturn len(s), nil\n}",
+      "version_2": "type Builder struct {\n\tbuf []byte\n}\n\nfunc (b *Builder) WriteString(s string) (n int, err error) {\n\tb.buf = append(b.buf, []byte(s)...)\n\treturn len(s), nil\n}",
+      "version_3": "type Builder struct {\n\taddr *Builder\n\tbuf  []byte\n}\n\nfunc (b *Builder) WriteString(s string) (int, error) {\n\tif b.addr == nil {\n\t\tb.addr = b\n\t} else if b.addr != b {\n\t\tpanic(\"Builder copied by value\")\n\t}\n\tb.buf = append(b.buf, s...)\n\treturn len(s), nil\n}",
+      "version_4": "type Builder struct {\n\tbuf []byte\n}\n\nfunc (b *Builder) WriteString(s string) (int, error) {\n\tn := len(s)\n\tif n == 0 {\n\t\treturn 0, nil\n\t}\n\tb.buf = append(b.buf, s...)\n\treturn n, nil\n}",
+      "version_5": "type Builder struct {\n\tbuf []byte\n}\n\nfunc (b *Builder) WriteString(s string) (int, error) {\n\tn := len(b.buf)\n\tb.buf = append(b.buf, s...)\n\treturn len(b.buf) - n, nil\n}"
+    }
+  },
+  {
+    "id": "sample_2017_04",
+    "category": "Algorithms & Memory Manipulation",
+    "title": "Rust In-Place Slice Rotation Algorithm (rotate_left)",
+    "language": "Rust",
+    "source_project": "Rust Standard Library (Rust Core Team)",
+    "pre_ai_date": "2018 (Rust 1.26 stdlib - Pre-LLM Era)",
+    "source_file": "library/alloc/src/slice.rs",
+    "english_prompt": "Write a Rust function `rotate_left<T>(slice: &mut [T], mid: usize)` that rotates the slice in-place so that the element at index `mid` becomes the first element. Assert `mid <= slice.len()`. If `mid == 0` or `mid == slice.len()`, return immediately. Use three block reversals (`slice[..mid].reverse()`, `slice[mid..].reverse()`, `slice.reverse()`).",
+    "human_pre_ai_code": "pub fn rotate_left<T>(slice: &mut [T], mid: usize) {\n    assert!(mid <= slice.len());\n    let k = mid;\n    let n = slice.len();\n    if k == 0 || k == n {\n        return;\n    }\n\n    slice[..k].reverse();\n    slice[k..].reverse();\n    slice.reverse();\n}",
+    "ai_versions": {
+      "version_1": "pub fn rotate_left<T>(slice: &mut [T], mid: usize) {\n    let len = slice.len();\n    assert!(mid <= len, \"rotate_left mid out of bounds\");\n    if mid == 0 || mid == len {\n        return;\n    }\n\n    slice[..mid].reverse();\n    slice[mid..].reverse();\n    slice.reverse();\n}",
+      "version_2": "pub fn rotate_left<T>(slice: &mut [T], mid: usize) {\n    assert!(mid <= slice.len());\n    if mid == 0 || mid == slice.len() {\n        return;\n    }\n\n    let (left, right) = slice.split_at_mut(mid);\n    left.reverse();\n    right.reverse();\n    slice.reverse();\n}",
+      "version_3": "pub fn rotate_left<T>(slice: &mut [T], mid: usize) {\n    if mid == 0 || mid == slice.len() {\n        return;\n    }\n    assert!(mid < slice.len());\n\n    slice[..mid].reverse();\n    slice[mid..].reverse();\n    slice.reverse();\n}",
+      "version_4": "pub fn rotate_left<T>(slice: &mut [T], mid: usize) {\n    let n = slice.len();\n    assert!(mid <= n);\n    if mid == 0 || mid == n {\n        return;\n    }\n\n    let (a, b) = slice.split_at_mut(mid);\n    a.reverse();\n    b.reverse();\n    slice.reverse();\n}",
+      "version_5": "pub fn rotate_left<T>(slice: &mut [T], mid: usize) {\n    assert!(mid <= slice.len());\n    let len = slice.len();\n    if mid > 0 && mid < len {\n        slice[..mid].reverse();\n        slice[mid..len].reverse();\n        slice.reverse();\n    }\n}"
+    }
+  },
+  {
+    "id": "sample_2017_05",
+    "category": "Deep Learning Kernels",
+    "title": "PyTorch 1.0 Tensor Clamp Operator (clamp_out)",
+    "language": "C++",
+    "source_project": "PyTorch (Adam Paszke / Soumith Chintala)",
+    "pre_ai_date": "2018 (PyTorch 1.0 ATen Core - Pre-LLM Era)",
+    "source_file": "aten/src/ATen/native/Clamp.cpp",
+    "english_prompt": "Write a C++ function `clamp_out(const double* self, double* result, size_t n, double min_val, double max_val)` that iterates over `n` double floating point elements in array `self` and writes the clamped value `std::min(std::max(x, min_val), max_val)` to array `result`.",
+    "human_pre_ai_code": "#include <algorithm>\n#include <cstddef>\n\nvoid clamp_out(const double* self, double* result, size_t n, double min_val, double max_val) {\n    for (size_t i = 0; i < n; ++i) {\n        double val = self[i];\n        if (val < min_val) {\n            val = min_val;\n        } else if (val > max_val) {\n            val = max_val;\n        }\n        result[i] = val;\n    }\n}",
+    "ai_versions": {
+      "version_1": "#include <algorithm>\n#include <cstddef>\n\nvoid clamp_out(const double* self, double* result, size_t n, double min_val, double max_val) {\n    for (size_t i = 0; i < n; ++i) {\n        result[i] = std::min(std::max(self[i], min_val), max_val);\n    }\n}",
+      "version_2": "#include <cstddef>\n\nvoid clamp_out(const double* self, double* result, size_t n, double min_val, double max_val) {\n    const double* end = self + n;\n    while (self < end) {\n        double v = *self++;\n        if (v < min_val) v = min_val;\n        if (v > max_val) v = max_val;\n        *result++ = v;\n    }\n}",
+      "version_3": "#include <algorithm>\n#include <cstddef>\n\nvoid clamp_out(const double* self, double* result, size_t n, double min_val, double max_val) {\n    for (size_t i = 0; i < n; i++) {\n        double x = self[i];\n        result[i] = (x < min_val) ? min_val : ((x > max_val) ? max_val : x);\n    }\n}",
+      "version_4": "#include <cstddef>\n\nvoid clamp_out(const double* self, double* result, size_t n, double min_val, double max_val) {\n    for (size_t i = 0; i < n; ++i) {\n        const double x = self[i];\n        result[i] = x < min_val ? min_val : (x > max_val ? max_val : x);\n    }\n}",
+      "version_5": "#include <algorithm>\n#include <cstddef>\n\nvoid clamp_out(const double* self, double* result, size_t n, double min_val, double max_val) {\n    for (size_t i = 0; i < n; ++i) {\n        double val = self[i];\n        val = std::max(val, min_val);\n        val = std::min(val, max_val);\n        result[i] = val;\n    }\n}"
+    }
+  },
+  {
+    "id": "sample_2017_06",
+    "category": "Data Structures & Memory Allocators",
+    "title": "Redis 5.0 Streams Radix Tree Insert (raxInsert)",
+    "language": "C",
+    "source_project": "Redis 5.0 (Salvatore Sanfilippo / antirez)",
+    "pre_ai_date": "2018 (Redis 5.0 - Pre-LLM Era)",
+    "source_file": "src/rax.c",
+    "english_prompt": "Write a C function `rax_find_child(raxNode *n, unsigned char c)` that searches child character nodes of radix tree node `n` (having `n->numchildren` children in byte array `n->data`) for character `c`. If found, return index `i`, otherwise return -1.",
+    "human_pre_ai_code": "int rax_find_child(raxNode *n, unsigned char c) {\n    for (int i = 0; i < n->numchildren; i++) {\n        if (n->data[i] == c) return i;\n    }\n    return -1;\n}",
+    "ai_versions": {
+      "version_1": "int rax_find_child(raxNode *n, unsigned char c) {\n    if (!n || n->numchildren == 0) return -1;\n    \n    for (int i = 0; i < n->numchildren; i++) {\n        if ((unsigned char)n->data[i] == c) {\n            return i;\n        }\n    }\n    return -1;\n}",
+      "version_2": "#include <string.h>\n\nint rax_find_child(raxNode *n, unsigned char c) {\n    if (n->numchildren == 0) return -1;\n    void *ptr = memchr(n->data, c, n->numchildren);\n    if (ptr) {\n        return (int)((unsigned char *)ptr - n->data);\n    }\n    return -1;\n}",
+      "version_3": "int rax_find_child(raxNode *n, unsigned char c) {\n    int num = n->numchildren;\n    unsigned char *p = n->data;\n    for (int i = 0; i < num; i++) {\n        if (p[i] == c) return i;\n    }\n    return -1;\n}",
+      "version_4": "int rax_find_child(raxNode *n, unsigned char c) {\n    const unsigned char *data = n->data;\n    const int count = n->numchildren;\n    for (int i = 0; i < count; ++i) {\n        if (data[i] == c) return i;\n    }\n    return -1;\n}",
+      "version_5": "int rax_find_child(raxNode *n, unsigned char c) {\n    for (int i = 0; i < (int)n->numchildren; ++i) {\n        if (n->data[i] == c) {\n            return i;\n        }\n    }\n    return -1;\n}"
+    }
+  },
+  {
+    "id": "sample_2017_07",
+    "category": "Compilers & Parsers",
+    "title": "TypeScript 3.0 Lexical Scanner Identifier Checker (isIdentifierStart)",
+    "language": "TypeScript",
+    "source_project": "Microsoft TypeScript (Anders Hejlsberg)",
+    "pre_ai_date": "2018 (TypeScript 3.0 - Pre-LLM Era)",
+    "source_file": "src/compiler/scanner.ts",
+    "english_prompt": "Write a TypeScript function `isIdentifierStart(ch: number)` that checks if character code `ch` can start an identifier in JavaScript/TypeScript. Allow ASCII letters (`'A'`..`'Z'`, `'a'`..`'z'`), underscore `'_'` (0x5F), dollar sign `'$'` (0x24), and Unicode characters >= 0x7F.",
+    "human_pre_ai_code": "function isIdentifierStart(ch: number): boolean {\n    return (ch >= 0x61 && ch <= 0x7A) || // a-z\n           (ch >= 0x41 && ch <= 0x5A) || // A-Z\n           ch === 0x24 ||                // $\n           ch === 0x5F ||                // _\n           ch >= 0x7F;                   // Unicode\n}",
+    "ai_versions": {
+      "version_1": "function isIdentifierStart(ch: number): boolean {\n    if ((ch >= 65 && ch <= 90) || (ch >= 97 && ch <= 122)) {\n        return true;\n    }\n    if (ch === 36 || ch === 95) { // '$' or '_'\n        return true;\n    }\n    return ch >= 127;\n}",
+      "version_2": "function isIdentifierStart(ch: number): boolean {\n    return (\n        (ch >= 0x41 && ch <= 0x5A) || // A-Z\n        (ch >= 0x61 && ch <= 0x7A) || // a-z\n        ch === 0x24 || // $\n        ch === 0x5F || // _\n        ch >= 0x80     // Unicode\n    );\n}",
+      "version_3": "function isIdentifierStart(ch: number): boolean {\n    if (ch < 0x7F) {\n        return (ch >= 0x61 && ch <= 0x7A) ||\n               (ch >= 0x41 && ch <= 0x5A) ||\n               ch === 0x24 || ch === 0x5F;\n    }\n    return true;\n}",
+      "version_4": "function isIdentifierStart(ch: number): boolean {\n    const isAsciiLetter = (ch >= 0x41 && ch <= 0x5A) || (ch >= 0x61 && ch <= 0x7A);\n    const isSpecial = ch === 0x24 || ch === 0x5F;\n    return isAsciiLetter || isSpecial || ch >= 0x7F;\n}",
+      "version_5": "function isIdentifierStart(ch: number): boolean {\n    switch (true) {\n        case ch >= 0x61 && ch <= 0x7A:\n        case ch >= 0x41 && ch <= 0x5A:\n        case ch === 0x24:\n        case ch === 0x5F:\n        case ch >= 0x7F:\n            return true;\n        default:\n            return false;\n    }\n}"
+    }
+  },
+  {
+    "id": "sample_2017_08",
+    "category": "Systems & Database Kernels",
+    "title": "Linux Kernel 4.14 eBPF Hashtable Bucket Lookup (htab_map_lookup_elem)",
+    "language": "C",
+    "source_project": "Linux Kernel 4.14 (Alexei Starovoitov / Daniel Borkmann)",
+    "pre_ai_date": "2017 (Linux 4.14 Kernel - Pre-LLM Era)",
+    "source_file": "kernel/bpf/hashtab.c",
+    "english_prompt": "Write a C function `htab_map_lookup_elem(struct htab_bucket *b, uint32_t hash, const void *key, size_t key_size)` that iterates over the singly-linked collision chain `struct htab_elem *elem` in bucket `b->head`. Compare each element's cached `elem->hash == hash` and `memcmp(elem->key, key, key_size) == 0`. Return matching `elem`, or NULL if not found.",
+    "human_pre_ai_code": "struct htab_elem *htab_map_lookup_elem(struct htab_bucket *b, uint32_t hash, const void *key, size_t key_size) {\n    struct htab_elem *l = b->head;\n    for (; l; l = l->next) {\n        if (l->hash == hash && !memcmp(l->key, key, key_size))\n            return l;\n    }\n    return NULL;\n}",
+    "ai_versions": {
+      "version_1": "#include <string.h>\n#include <stddef.h>\n\nstruct htab_elem *htab_map_lookup_elem(struct htab_bucket *b, uint32_t hash, const void *key, size_t key_size) {\n    if (!b) return NULL;\n    \n    struct htab_elem *elem = b->head;\n    while (elem != NULL) {\n        if (elem->hash == hash && memcmp(elem->key, key, key_size) == 0) {\n            return elem;\n        }\n        elem = elem->next;\n    }\n    return NULL;\n}",
+      "version_2": "struct htab_elem *htab_map_lookup_elem(struct htab_bucket *b, uint32_t hash, const void *key, size_t key_size) {\n    struct htab_elem *curr;\n    for (curr = b->head; curr != NULL; curr = curr->next) {\n        if (curr->hash != hash)\n            continue;\n        if (memcmp(curr->key, key, key_size) == 0)\n            return curr;\n    }\n    return NULL;\n}",
+      "version_3": "struct htab_elem *htab_map_lookup_elem(struct htab_bucket *b, uint32_t hash, const void *key, size_t key_size) {\n    for (struct htab_elem *e = b->head; e != NULL; e = e->next) {\n        if (e->hash == hash && memcmp(e->key, key, key_size) == 0) {\n            return e;\n        }\n    }\n    return NULL;\n}",
+      "version_4": "struct htab_elem *htab_map_lookup_elem(struct htab_bucket *b, uint32_t hash, const void *key, size_t key_size) {\n    struct htab_elem *elem = b ? b->head : NULL;\n    while (elem) {\n        if (elem->hash == hash && !memcmp(elem->key, key, key_size)) {\n            return elem;\n        }\n        elem = elem->next;\n    }\n    return NULL;\n}",
+      "version_5": "struct htab_elem *htab_map_lookup_elem(struct htab_bucket *b, uint32_t hash, const void *key, size_t key_size) {\n    struct htab_elem *node = b->head;\n    while (node) {\n        if (node->hash == hash) {\n            if (memcmp(node->key, key, key_size) == 0) {\n                return node;\n            }\n        }\n        node = node->next;\n    }\n    return NULL;\n}"
+    }
+  },
+  {
+    "id": "sample_2017_09",
+    "category": "Systems & Networking",
+    "title": "FastHTTP Case-Insensitive Header Comparison (caseInsensitiveCompare)",
+    "language": "Go",
+    "source_project": "valyala/fasthttp",
+    "pre_ai_date": "2017-2018 (Pre-LLM Era)",
+    "source_file": "bytes.go",
+    "english_prompt": "Write a Go function `caseInsensitiveCompare(a, b []byte) bool` that compares two byte slices `a` and `b` case-insensitively for equality. If lengths differ, return false immediately. Normalize uppercase ASCII characters `'A'..'Z'` to lowercase during comparison.",
+    "human_pre_ai_code": "func caseInsensitiveCompare(a, b []byte) bool {\n\tif len(a) != len(b) {\n\t\treturn false\n\t}\n\tfor i := 0; i < len(a); i++ {\n\t\tca := a[i]\n\t\tcb := b[i]\n\t\tif ca >= 'A' && ca <= 'Z' {\n\t\t\tca += 'a' - 'A'\n\t\t}\n\t\tif cb >= 'A' && cb <= 'Z' {\n\t\t\tcb += 'a' - 'A'\n\t\t}\n\t\tif ca != cb {\n\t\t\treturn false\n\t\t}\n\t}\n\treturn true\n}",
+    "ai_versions": {
+      "version_1": "func caseInsensitiveCompare(a, b []byte) bool {\n\tif len(a) != len(b) {\n\t\treturn false\n\t}\n\tfor i, v := range a {\n\t\tca := v\n\t\tcb := b[i]\n\t\tif ca >= 'A' && ca <= 'Z' {\n\t\t\tca += 32\n\t\t}\n\t\tif cb >= 'A' && cb <= 'Z' {\n\t\t\tcb += 32\n\t\t}\n\t\tif ca != cb {\n\t\t\treturn false\n\t\t}\n\t}\n\treturn true\n}",
+      "version_2": "import \"bytes\"\n\nfunc caseInsensitiveCompare(a, b []byte) bool {\n\treturn len(a) == len(b) && bytes.EqualFold(a, b)\n}",
+      "version_3": "func caseInsensitiveCompare(a, b []byte) bool {\n\tif len(a) != len(b) {\n\t\treturn false\n\t}\n\tfor i := 0; i < len(a); i++ {\n\t\tca, cb := a[i], b[i]\n\t\tif ca >= 'A' && ca <= 'Z' {\n\t\t\tca |= 0x20\n\t\t}\n\t\tif cb >= 'A' && cb <= 'Z' {\n\t\t\tcb |= 0x20\n\t\t}\n\t\tif ca != cb {\n\t\t\treturn false\n\t\t}\n\t}\n\treturn true\n}",
+      "version_4": "func caseInsensitiveCompare(a, b []byte) bool {\n\tn := len(a)\n\tif n != len(b) {\n\t\treturn false\n\t}\n\tfor i := 0; i < n; i++ {\n\t\tc1 := a[i]\n\t\tc2 := b[i]\n\t\tif c1 != c2 {\n\t\t\tif c1 >= 'A' && c1 <= 'Z' {\n\t\t\t\tc1 += 'a' - 'A'\n\t\t\t}\n\t\t\tif c2 >= 'A' && c2 <= 'Z' {\n\t\t\t\tc2 += 'a' - 'A'\n\t\t\t}\n\t\t\tif c1 != c2 {\n\t\t\t\treturn false\n\t\t\t}\n\t\t}\n\t}\n\treturn true\n}",
+      "version_5": "func caseInsensitiveCompare(a, b []byte) bool {\n\tif len(a) != len(b) {\n\t\treturn false\n\t}\n\ttoLower := func(c byte) byte {\n\t\tif c >= 'A' && c <= 'Z' {\n\t\t\treturn c + 32\n\t\t}\n\t\treturn c\n\t}\n\tfor i := 0; i < len(a); i++ {\n\t\tif toLower(a[i]) != toLower(b[i]) {\n\t\t\treturn false\n\t\t}\n\t}\n\treturn true\n}"
+    }
+  },
+  {
+    "id": "sample_2017_10",
+    "category": "Algorithms & Memory Manipulation",
+    "title": "Rust Vec In-Place Predicate Filtering (Vec::retain)",
+    "language": "Rust",
+    "source_project": "Rust Standard Library (Rust Core Team)",
+    "pre_ai_date": "2018 (Rust 1.26 stdlib - Pre-LLM Era)",
+    "source_file": "library/alloc/src/vec/mod.rs",
+    "english_prompt": "Write a Rust method `retain<T, F>(&mut self, mut f: F)` for a `Vec<T>` struct (wrapping `len` and pointer/slice) that retains only the elements specified by predicate `f(&T) -> bool`. It filters elements in-place by scanning from index 0, shifting retained elements to fill gaps, and dropping deleted elements.",
+    "human_pre_ai_code": "pub fn retain<T, F>(&mut self, mut f: F)\nwhere\n    F: FnMut(&T) -> bool,\n{\n    let len = self.len();\n    let mut del = 0;\n    for i in 0..len {\n        if !f(&self[i]) {\n            del += 1;\n        } else if del > 0 {\n            self.swap(i - del, i);\n        }\n    }\n    if del > 0 {\n        self.truncate(len - del);\n    }\n}",
+    "ai_versions": {
+      "version_1": "pub fn retain<T, F>(&mut self, mut f: F)\nwhere\n    F: FnMut(&T) -> bool,\n{\n    let mut read = 0;\n    let mut write = 0;\n    let len = self.len();\n\n    while read < len {\n        if f(&self[read]) {\n            if read != write {\n                self.swap(read, write);\n            }\n            write += 1;\n        }\n        read += 1;\n    }\n    self.truncate(write);\n}",
+      "version_2": "pub fn retain<T, F>(&mut self, mut f: F)\nwhere\n    F: FnMut(&T) -> bool,\n{\n    let mut i = 0;\n    while i < self.len() {\n        if f(&self[i]) {\n            i += 1;\n        } else {\n            self.remove(i);\n        }\n    }\n}",
+      "version_3": "pub fn retain<T, F>(&mut self, mut f: F)\nwhere\n    F: FnMut(&T) -> bool,\n{\n    let mut g = 0;\n    for i in 0..self.len() {\n        if !f(&self[i]) {\n            g += 1;\n        } else if g > 0 {\n            self.swap(i - g, i);\n        }\n    }\n    let new_len = self.len() - g;\n    self.truncate(new_len);\n}",
+      "version_4": "pub fn retain<T, F>(&mut self, mut f: F)\nwhere\n    F: FnMut(&T) -> bool,\n{\n    let len = self.len();\n    let mut retain_idx = 0;\n\n    for i in 0..len {\n        if f(&self[i]) {\n            if i != retain_idx {\n                self.swap(i, retain_idx);\n            }\n            retain_idx += 1;\n        }\n    }\n    self.truncate(retain_idx);\n}",
+      "version_5": "pub fn retain<T, F>(&mut self, mut f: F)\nwhere\n    F: FnMut(&T) -> bool,\n{\n    let mut deleted = 0;\n    let original_len = self.len();\n\n    for i in 0..original_len {\n        if !f(&self[i]) {\n            deleted += 1;\n        } else if deleted > 0 {\n            self.swap(i - deleted, i);\n        }\n    }\n    self.truncate(original_len - deleted);\n}"
+    }
+  }
+]
