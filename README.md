@@ -14,32 +14,33 @@
 
 The rapid adoption of Large Language Models (LLMs) for automated code synthesis has sparked interest in evaluating the structural and qualitative properties of machine-generated code. Existing benchmarks often focus strictly on functional pass rates (e.g., HumanEval, MBPP) rather than stylometric, performance, and maintenance characteristics. 
 
-This repository contains the dataset, reproduction scripts, and formal research paper for an empirical case study comparing **136 complete code implementations**, contrasting zero-shot synthetic generations from three frontier LLM architectures (**Google Gemini 3.5 Flash**, **OpenAI GPT-5.6 Sol**, and **Anthropic Claude Sonnet 4.6**) against a reference baseline of 10 production-hardened standard library functions authored by prominent human engineers prior to the LLM era (2017–2018 reference code from React 16, Go 1.10, Redis 5.0, Linux Kernel 4.14, Rust stdlib, PyTorch 1.0, and FastHTTP).
+This repository contains the dataset, reproduction scripts, and formal research paper for an empirical case study evaluating **76 zero-shot synthetic code generations** produced by three frontier LLM architectures (**Google Gemini 3.5 Flash**, **OpenAI GPT-5.6 Sol**, and **Anthropic Claude Sonnet 4.6**) against a reference baseline of 10 production-hardened standard library functions authored by prominent human engineers prior to the LLM era (2017–2018 reference code from React 16, Go 1.10, Redis 5.0, Linux Kernel 4.14, Rust stdlib, PyTorch 1.0, and FastHTTP).
 
 ---
 
-## 📊 Quantitative Stylometric Results & Statistical Significance
+## 📊 Primary Frontier Model Study: Human Reference ($n=10$) vs. Frontier LLMs ($N=76$)
 
-Our automated stylometric parser extracted structural metrics across all 136 code programs, evaluated via Mann-Whitney U test with Holm-Bonferroni FWER correction and Rank-Biserial Correlation effect sizes ($r_{\text{rb}}$):
+Evaluated via Mann-Whitney U test with Holm-Bonferroni FWER correction, non-parametric 10,000-resample Bootstrap 95% CIs, and Rank-Biserial Correlation effect sizes ($r_{\text{rb}}$):
 
-| Stylometric Metric | Human Reference ($n=10$) | Synthetic Models ($N=126$) | Mann-Whitney $U$ | Raw $p$-value | Holm-Bonferroni $p_{\text{adj}}$ | Rank-Biserial Effect Size ($r_{\text{rb}}$) | FWER Significance |
+| Stylometric Metric | Human Reference ($n=10$) | Frontier LLMs ($N=76$) | Mann-Whitney $U$ | Raw $p$-value | Holm-Bonferroni $p_{\text{adj}}$ | Rank-Biserial Effect Size ($r_{\text{rb}}$) | FWER Significance |
 |---|---|---|---|---|---|---|---|
-| **Lines of Code (LOC)** | $15.00 \pm 6.43$ [11.0, 19.0] | $41.17 \pm 31.36$ [35.7, 46.7] | 305.5 | $p = 0.0069$ | **$p_{\text{adj}} = 0.0344$** | **$r_{\text{rb}} = +0.515$** (Large) | **Significant ($p < 0.05$)** |
-| **Comment Density (%)** | $1.43\% \pm 4.29\%$ [-1.2, 4.1] | $9.23\% \pm 11.15\%$ [7.3, 11.2] | 359.0 | $p = 0.0152$ | **$p_{\text{adj}} = 0.0456$** | **$r_{\text{rb}} = +0.430$** (Med-Large) | **Significant ($p < 0.05$)** |
-| **Explicit Type Annotations** | $1.50 \pm 1.28$ [0.7, 2.3] | $8.56 \pm 10.70$ [6.7, 10.4] | 337.0 | $p = 0.0142$ | $p_{\text{adj}} = 0.0568$ | **$r_{\text{rb}} = +0.465$** (Med-Large) | Marginally Significant |
-| **Helper Method Count** | $0.00 \pm 0.00$ [0.0, 0.0] | $0.75 \pm 1.99$ [0.4, 1.1] | 510.0 | $p = 0.1336$ | $p_{\text{adj}} = 0.2672$ | $r_{\text{rb}} = +0.190$ (Small) | Not Significant |
-| **Return Statement Count** | $1.70 \pm 1.42$ [0.8, 2.6] | $2.56 \pm 2.16$ [2.2, 2.9] | 478.0 | $p = 0.1983$ | $p_{\text{adj}} = 0.1983$ | $r_{\text{rb}} = +0.241$ (Small) | Not Significant |
-| **Vertical Whitespace (%)** | $5.54\% \pm 6.59\%$ [1.5, 9.6] | $13.54\% \pm 7.60\%$ [12.2, 14.9] | 271.0 | $p = 0.0027$ | **$p_{\text{adj}} = 0.0163$** | **$r_{\text{rb}} = +0.570$** (Large) | **Significant ($p < 0.05$)** |
+| **Lines of Code (LOC)** | $15.00 \pm 6.78$ [11.1, 18.9] | $59.62 \pm 27.67$ [53.5, 65.9] | 22.5 | $p = 1.51 \times 10^{-6}$ | **$p_{\text{adj}} = 9.04 \times 10^{-6}$** | **$r_{\text{rb}} = +0.941$** (Massive) | **Significant ($p < 0.01$)** |
+| **Comment Density (%)** | $1.43\% \pm 4.52\%$ [0.0, 4.3] | $13.73\% \pm 11.47\%$ [11.2, 16.3] | 119.5 | $p = 3.73 \times 10^{-4}$ | **$p_{\text{adj}} = 0.0019$** | **$r_{\text{rb}} = +0.686$** (Large) | **Significant ($p < 0.01$)** |
+| **Explicit Type Annotations** | $1.50 \pm 1.35$ [0.7, 2.3] | $13.13 \pm 11.72$ [10.6, 15.8] | 86.0 | $p = 7.47 \times 10^{-5}$ | **$p_{\text{adj}} = 0.0004$** | **$r_{\text{rb}} = +0.774$** (Large) | **Significant ($p < 0.01$)** |
+| **Helper Method Count** | $0.00 \pm 0.00$ [0.0, 0.0] | $1.25 \pm 2.46$ [0.7, 1.8] | 260.0 | $p = 0.0416$ | $p_{\text{adj}} = 0.0832$ | **$r_{\text{rb}} = +0.316$** (Medium) | Marginally Significant |
+| **Return Statement Count** | $1.70 \pm 1.49$ [0.9, 2.6] | $3.16 \pm 2.31$ [2.7, 3.7] | 219.0 | $p = 0.0272$ | $p_{\text{adj}} = 0.0816$ | **$r_{\text{rb}} = +0.424$** (Med-Large) | Marginally Significant |
+| **Vertical Whitespace (%)** | $5.54\% \pm 6.95\%$ [1.8, 9.8] | $17.47\% \pm 4.88\%$ [16.4, 18.5] | 71.5 | $p = 3.32 \times 10^{-5}$ | **$p_{\text{adj}} = 0.0002$** | **$r_{\text{rb}} = +0.812$** (Massive) | **Significant ($p < 0.01$)** |
 
-### Per-Model Stylometric Breakdown Table
+---
+
+## 📈 Per-Model Breakdown & Kruskal-Wallis Inter-Model Significance Tests
 
 | Model Sub-Group | Record Count ($N$) | Mean LOC ($\pm \text{SD}$) | Mean Comment Density (%) | Mean Type Annotations | Mean Helper Methods |
 |---|---|---|---|---|---|
 | **Google Gemini 3.5 Flash** | $N=38$ | $55.39 \pm 23.81$ | **$21.31\% \pm 7.77\%$** | $10.97 \pm 8.21$ | $1.08 \pm 1.42$ |
 | **OpenAI GPT-5.6 Sol** | $N=19$ | $54.16 \pm 35.19$ | **$1.08\% \pm 2.18\%$** | $10.74 \pm 9.53$ | $1.26 \pm 1.85$ |
 | **Anthropic Claude Sonnet 4.6** | $N=19$ | $73.53 \pm 19.76$ | **$11.23\% \pm 10.61\%$** | $19.84 \pm 14.21$ | $1.58 \pm 2.14$ |
-| **Pre-Generated AI Recreations** | $N=50$ | $13.14 \pm 5.21$ | $2.39\% \pm 6.21\%$ | $1.62 \pm 1.10$ | $0.00 \pm 0.00$ |
-| **Pooled Synthetic Total** | $N=126$ | **$41.17 \pm 31.36$** | **$9.23\% \pm 11.15\%$** | **$8.56 \pm 10.70$** | **$0.75 \pm 1.99$** |
+| **Kruskal-Wallis $H$-test** | — | $H = 8.93, \mathbf{p = 0.0115}$ | $H = 43.50, \mathbf{p = 3.58 \times 10^{-10}}$ | $H = 4.98, p = 0.0829$ | $H = 0.92, p = 0.6316$ |
 
 ---
 
@@ -52,7 +53,7 @@ Our automated stylometric parser extracted structural metrics across all 136 cod
 | **Pattern 3** | **Trivial Syntax-Echo Comments**: Writing comments that directly repeat line syntax (e.g., `# Increment counter`). | **28 / 126** | **22.2%** |
 | **Pattern 4** | **Functional Iterator Closures in Hot Loops**: Using `.every()`, `.map()`, or `.forEach()` in performance hot loops. | **5 / 126** | **4.0%** |
 | **Pattern 5** | **In-Loop Mutating Array Shifts**: Regressing runtime complexity from $O(N)$ to $O(N^2)$ via vector removals in loops. | **1 / 126** | **0.8%** |
-| **Pattern 6** | **Asynchronous Timer/Listener Lifecycle Leaks**: Omitting `clearTimeout()` or mutating subscriber lists live.* | **0 / 126\*** | **0.0%\*** |
+| **Pattern 6** | **Asynchronous State & Timer Lifecycle Leaks**: Omitting `clearTimeout()` or mutating subscriber lists live.* | **0 / 126\*** | **0.0%\*** |
 | **Pattern 7** | **Compiler Vectorization Obstacles**: Using nested `std::min(std::max(...))` calls that hinder SIMD auto-vectorization. | **1 / 126** | **0.8%** |
 
 *\*Note on Pattern 6*: Pattern 6 was identified during qualitative domain analysis of asynchronous primitives, but scored 0/126 in the quantitative dataset because Tier 2 async tasks (`task_12` Event Emitter and `task_14` TTL Cache) were skipped when OpenRouter API calls reached the hard payment budget limit.

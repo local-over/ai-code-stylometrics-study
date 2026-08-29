@@ -10,11 +10,11 @@
 
 The rapid adoption of Large Language Models (LLMs) for automated code synthesis has sparked interest in evaluating the structural and qualitative properties of machine-generated code. Existing benchmarks often focus strictly on functional pass rates (e.g., HumanEval, MBPP) rather than stylometric, performance, and maintenance characteristics. 
 
-This paper presents an empirical case study comparing **136 complete code implementations**, contrasting zero-shot synthetic generations from three frontier LLM architectures (*Google Gemini 3.5 Flash*, *OpenAI GPT-5.6 Sol*, and *Anthropic Claude Sonnet 4.6*) against a reference baseline of 10 production-hardened standard library functions authored by prominent human engineers prior to the LLM era (2017–2018 code from React 16, Go 1.10, Redis 5.0, Linux Kernel 4.14, Rust stdlib, PyTorch 1.0, and FastHTTP).
+This paper presents an empirical case study evaluating **76 zero-shot synthetic code generations** produced by three frontier LLM architectures (*Google Gemini 3.5 Flash*, *OpenAI GPT-5.6 Sol*, and *Anthropic Claude Sonnet 4.6*) against a reference baseline of 10 production-hardened standard library functions authored by prominent human engineers prior to the LLM era (2017–2018 code from React 16, Go 1.10, Redis 5.0, Linux Kernel 4.14, Rust stdlib, PyTorch 1.0, and FastHTTP). In addition, we evaluate an auxiliary secondary benchmark of 50 pre-generated AI recreations.
 
-Our quantitative analysis reveals statistically significant stylometric divergence: synthetic implementations exhibit **+174% lines of code (LOC) expansion** ($\text{Mean} = 41.17 \pm 31.36$ LOC vs. $15.00 \pm 6.43$ LOC human, Mann-Whitney $U = 305.5$, Holm-Bonferroni $p_{\text{adj}} = 0.0344$, rank-biserial effect size $r_{\text{rb}} = +0.515$), elevated comment density ($9.23\% \pm 11.15\%$ synthetic vs. $1.43\% \pm 4.29\%$ human, $p_{\text{adj}} = 0.0456$, $r_{\text{rb}} = +0.430$), and higher vertical whitespace ratios ($13.54\% \pm 7.60\%$ synthetic vs. $5.54\% \pm 6.59\%$ human, $p_{\text{adj}} = 0.0163$, $r_{\text{rb}} = +0.570$). 
+Our quantitative analysis reveals statistically significant stylometric divergence: frontier synthetic implementations exhibit **+297% lines of code (LOC) expansion** ($\text{Mean} = 59.62 \pm 27.67$ LOC vs. $15.00 \pm 6.78$ LOC human, Mann-Whitney $U = 22.5$, Holm-Bonferroni $p_{\text{adj}} = 9.04 \times 10^{-6}$, rank-biserial effect size $r_{\text{rb}} = +0.941$), elevated comment density ($13.73\% \pm 11.47\%$ synthetic vs. $1.43\% \pm 4.52\%$ human, $p_{\text{adj}} = 0.0019$, $r_{\text{rb}} = +0.686$), higher explicit type annotation density ($13.13 \pm 11.72$ vs $1.50 \pm 1.35$, $p_{\text{adj}} = 0.0004$, $r_{\text{rb}} = +0.774$), and higher vertical whitespace ratios ($17.47\% \pm 4.88\%$ synthetic vs. $5.54\% \pm 6.95\%$ human, $p_{\text{adj}} = 0.0002$, $r_{\text{rb}} = +0.812$). All confidence intervals are computed via non-parametric 10,000-resample bootstrapping.
 
-We catalogue empirical occurrence rates for seven structural patterns—including micro-helper function fragmentation (**54.8%** of synthetic programs), trivial syntax-echo comments (**22.2%**), and contextual invariant omissions (**4.8%**). Finally, we explicitly document threats to validity, noting that comparing zero-shot LLM output against battle-tested open-source reference code highlights the gap between initial machine generation and production-hardened software rather than an intrinsic limit of synthetic intelligence.
+Inter-model evaluations using Kruskal-Wallis $H$-tests demonstrate significant variance across LLM providers, highlighting Gemini 3.5 Flash as hyper-pedagogical ($21.31\%$ comment density), GPT-5.6 Sol as minimal ($1.08\%$ comment density), and Claude Sonnet 4.6 as highly verbose ($73.53$ LOC avg). We catalogue occurrence rates for seven structural patterns and document threats to validity, establishing that zero-shot LLM output reflects pedagogical abstraction rather than production-hardened human engineering idioms.
 
 ---
 
@@ -24,7 +24,7 @@ Automated code generation powered by Large Language Models (LLMs) has transition
 
 A central open question in automated software engineering is how zero-shot machine-generated code structurally differs from hardened human-written software. When tasked with writing code, LLMs sample token probability distributions shaped by public code repositories, Q&A forums, and educational tutorials. This statistical process creates distinct structural and visual signatures.
 
-This paper presents an empirical comparative analysis of human reference code versus zero-shot LLM code across **136 programs**, spanning 14 algorithmic research tasks and 10 pre-AI reference flows. We evaluate metrics including LOC, comment density, type annotation density, helper function fragmentation, return path density, and vertical whitespace.
+This paper presents an empirical comparative analysis of human reference code versus zero-shot LLM code across **76 primary frontier model generations** and **10 pre-AI reference flows**, supported by an auxiliary secondary dataset of 50 AI recreations (total dataset $N=136$).
 
 ---
 
@@ -56,52 +56,56 @@ To establish a human reference baseline free from potential LLM training contami
 9. **FastHTTP Networking Engine** (`caseInsensitiveCompare`) — Aliaksandr Valialkin (valyala)
 10. **Rust Standard Library** (`Vec::retain` In-Place Predicate Filtering) — Rust Core Team
 
-*Note on Baseline Selection*: These functions represent highly optimized, battle-tested core routines written by senior systems engineers. They provide a high-water mark for production code, serving as a reference point for zero-shot LLM synthesis.
-
-### 3.2 Sampling Protocol & Variance Explanation
+### 3.2 Sampling Protocol & Inter-Task Variance
 We queried three frontier LLM architectures via stateless OpenRouter API calls using a standardized prompt template:
 - **System Prompt**: `"Write clean, production-quality code. Output only the code, no explanation."`
 - **Sampling Parameters**: Single-shot generation, deterministic sampling (`temperature = 0.0` / default minimum variance), `max_tokens = 750-800`.
-- **Inter-Task and Inter-Model Variance**: Under `temperature = 0.0`, single-shot API outputs for a specific `(model, task)` pair are deterministic. The reported sample standard deviation ($\text{SD} = 31.36$ LOC) reflects **inter-task variance across 14 diverse algorithmic problems** (ranging from 10-line string validators to 120-line compilers) and **inter-model variance across 3 model families**, rather than intra-run stochastic noise.
+- **Uneven $N$ Allocation Explanation**: Under the fixed API budget, Google Gemini 3.5 Flash was allocated 2 runs per task-language pair ($N=38$), while GPT-5.6 Sol ($N=19$) and Claude Sonnet 4.6 ($N=19$) were allocated 1 run per pair due to higher token costs.
+- **Inter-Task and Inter-Model Variance**: Under `temperature = 0.0`, single-shot API outputs for a specific `(model, task)` pair are deterministic. The reported sample standard deviation ($\text{SD} = 27.67$ LOC) reflects **inter-task variance across 14 diverse algorithmic problems** and **inter-model variance across 3 model families**.
 
 ### 3.3 Dataset Breakdown & Exact Reconciliation ($N=136$ Total Records)
-To ensure 100% arithmetic transparency:
-- **Human Baseline Reference Records ($n=10$)**: The 10 pre-AI reference library functions.
-- **Pre-Generated AI Recreations ($N=50$)**: 5 blind AI recreation versions generated for each of the 10 human benchmark prompts.
-- **OpenRouter Research Task Runs ($N=76$)**: 76 completed LLM generations across 14 research tasks in Python and JavaScript before hitting the API credit cap.
-- **Master Dataset Reconciliation**: $10\text{ (Human)} + 50\text{ (AI Recreations)} + 76\text{ (OpenRouter Tasks)} = 136\text{ Master Records}$ ($10$ Human + $126$ Synthetic Generations).
+To ensure complete transparency regarding dataset arithmetic:
+- **Human Reference Baseline ($n=10$)**: 10 pre-AI reference library functions.
+- **Primary Frontier LLM Dataset ($N=76$)**: 76 zero-shot OpenRouter generations across Gemini ($N=38$), GPT ($N=19$), and Claude ($N=19$) across 14 tasks in Python and JavaScript.
+- **Secondary AI Benchmark Recreations ($N=50$)**: 50 pre-generated AI recreations produced for the 10 human benchmark prompts.
+- **Total Dataset**: $10 + 76 + 50 = 136\text{ Master Records}$.
 
 ---
 
 ## 4. Quantitative Stylometric Results & Statistical Significance
 
-We extracted six quantitative stylometric metrics across all 136 code artifacts. We report **Means $\pm$ Standard Deviations ($\text{Mean} \pm \text{SD}$)**, **95% Confidence Intervals (CI)**, **Mann-Whitney U Test statistics**, **Holm-Bonferroni adjusted $p$-values ($p_{\text{adj}}$)** controlling Family-Wise Error Rate (FWER) at $\alpha = 0.05$, and **Rank-Biserial Correlation effect sizes ($r_{\text{rb}}$)**:
+We extracted six quantitative stylometric metrics across all code artifacts. To account for non-normal distributions, we report **Means $\pm$ Standard Deviations ($\text{Mean} \pm \text{SD}$)**, **Bootstrap 95% Confidence Intervals (CI)** (percentile method, 10,000 resamples), **Mann-Whitney U Test statistics**, **Holm-Bonferroni adjusted $p$-values ($p_{\text{adj}}$)** controlling Family-Wise Error Rate (FWER) at $\alpha = 0.05$, and **Rank-Biserial Correlation effect sizes ($r_{\text{rb}}$)**:
 
-| Stylometric Metric | Human Reference ($n=10$) | Synthetic Models ($N=126$) | Mann-Whitney $U$ | Raw $p$-value | Holm-Bonferroni $p_{\text{adj}}$ | Rank-Biserial Effect Size ($r_{\text{rb}}$) | FWER Significance |
+### 4.1 Primary Frontier Model Study: Human Reference ($n=10$) vs. Frontier LLMs ($N=76$)
+
+| Stylometric Metric | Human Reference ($n=10$) | Frontier LLMs ($N=76$) | Mann-Whitney $U$ | Raw $p$-value | Holm-Bonferroni $p_{\text{adj}}$ | Rank-Biserial Effect Size ($r_{\text{rb}}$) | FWER Significance |
 |---|---|---|---|---|---|---|---|
-| **Lines of Code (LOC)** | $15.00 \pm 6.43$ [11.0, 19.0] | $41.17 \pm 31.36$ [35.7, 46.7] | 305.5 | $p = 0.0069$ | **$p_{\text{adj}} = 0.0344$** | **$r_{\text{rb}} = +0.515$** (Large) | **Significant ($p < 0.05$)** |
-| **Comment Density (%)** | $1.43\% \pm 4.29\%$ [-1.2, 4.1] | $9.23\% \pm 11.15\%$ [7.3, 11.2] | 359.0 | $p = 0.0152$ | **$p_{\text{adj}} = 0.0456$** | **$r_{\text{rb}} = +0.430$** (Med-Large) | **Significant ($p < 0.05$)** |
-| **Explicit Type Annotations** | $1.50 \pm 1.28$ [0.7, 2.3] | $8.56 \pm 10.70$ [6.7, 10.4] | 337.0 | $p = 0.0142$ | $p_{\text{adj}} = 0.0568$ | **$r_{\text{rb}} = +0.465$** (Med-Large) | Marginally Significant |
-| **Helper Method Count** | $0.00 \pm 0.00$ [0.0, 0.0] | $0.75 \pm 1.99$ [0.4, 1.1] | 510.0 | $p = 0.1336$ | $p_{\text{adj}} = 0.2672$ | $r_{\text{rb}} = +0.190$ (Small) | Not Significant |
-| **Return Statement Count** | $1.70 \pm 1.42$ [0.8, 2.6] | $2.56 \pm 2.16$ [2.2, 2.9] | 478.0 | $p = 0.1983$ | $p_{\text{adj}} = 0.1983$ | $r_{\text{rb}} = +0.241$ (Small) | Not Significant |
-| **Vertical Whitespace (%)** | $5.54\% \pm 6.59\%$ [1.5, 9.6] | $13.54\% \pm 7.60\%$ [12.2, 14.9] | 271.0 | $p = 0.0027$ | **$p_{\text{adj}} = 0.0163$** | **$r_{\text{rb}} = +0.570$** (Large) | **Significant ($p < 0.05$)** |
+| **Lines of Code (LOC)** | $15.00 \pm 6.78$ [11.1, 18.9] | $59.62 \pm 27.67$ [53.5, 65.9] | 22.5 | $p = 1.51 \times 10^{-6}$ | **$p_{\text{adj}} = 9.04 \times 10^{-6}$** | **$r_{\text{rb}} = +0.941$** (Massive) | **Significant ($p < 0.01$)** |
+| **Comment Density (%)** | $1.43\% \pm 4.52\%$ [0.0, 4.3] | $13.73\% \pm 11.47\%$ [11.2, 16.3] | 119.5 | $p = 3.73 \times 10^{-4}$ | **$p_{\text{adj}} = 0.0019$** | **$r_{\text{rb}} = +0.686$** (Large) | **Significant ($p < 0.01$)** |
+| **Explicit Type Annotations** | $1.50 \pm 1.35$ [0.7, 2.3] | $13.13 \pm 11.72$ [10.6, 15.8] | 86.0 | $p = 7.47 \times 10^{-5}$ | **$p_{\text{adj}} = 0.0004$** | **$r_{\text{rb}} = +0.774$** (Large) | **Significant ($p < 0.01$)** |
+| **Helper Method Count** | $0.00 \pm 0.00$ [0.0, 0.0] | $1.25 \pm 2.46$ [0.7, 1.8] | 260.0 | $p = 0.0416$ | $p_{\text{adj}} = 0.0832$ | **$r_{\text{rb}} = +0.316$** (Medium) | Marginally Significant |
+| **Return Statement Count** | $1.70 \pm 1.49$ [0.9, 2.6] | $3.16 \pm 2.31$ [2.7, 3.7] | 219.0 | $p = 0.0272$ | $p_{\text{adj}} = 0.0816$ | **$r_{\text{rb}} = +0.424$** (Med-Large) | Marginally Significant |
+| **Vertical Whitespace (%)** | $5.54\% \pm 6.95\%$ [1.8, 9.8] | $17.47\% \pm 4.88\%$ [16.4, 18.5] | 71.5 | $p = 3.32 \times 10^{-5}$ | **$p_{\text{adj}} = 0.0002$** | **$r_{\text{rb}} = +0.812$** (Massive) | **Significant ($p < 0.01$)** |
 
-### Per-Model Stylometric Breakdown Table
-To prevent aggregation confusion, the table below breaks down metrics across each synthetic sub-group:
+### 4.2 Per-Model Breakdown & Kruskal-Wallis Inter-Model Significance Tests
+
+To evaluate inter-model differences across LLM providers, we report per-model means and Kruskal-Wallis $H$-tests across Gemini ($N=38$), GPT ($N=19$), and Claude ($N=19$):
 
 | Model Sub-Group | Record Count ($N$) | Mean LOC ($\pm \text{SD}$) | Mean Comment Density (%) | Mean Type Annotations | Mean Helper Methods |
 |---|---|---|---|---|---|
 | **Google Gemini 3.5 Flash** | $N=38$ | $55.39 \pm 23.81$ | **$21.31\% \pm 7.77\%$** | $10.97 \pm 8.21$ | $1.08 \pm 1.42$ |
 | **OpenAI GPT-5.6 Sol** | $N=19$ | $54.16 \pm 35.19$ | **$1.08\% \pm 2.18\%$** | $10.74 \pm 9.53$ | $1.26 \pm 1.85$ |
 | **Anthropic Claude Sonnet 4.6** | $N=19$ | $73.53 \pm 19.76$ | **$11.23\% \pm 10.61\%$** | $19.84 \pm 14.21$ | $1.58 \pm 2.14$ |
-| **Pre-Generated AI Recreations** | $N=50$ | $13.14 \pm 5.21$ | $2.39\% \pm 6.21\%$ | $1.62 \pm 1.10$ | $0.00 \pm 0.00$ |
-| **Pooled Synthetic Total** | $N=126$ | **$41.17 \pm 31.36$** | **$9.23\% \pm 11.15\%$** | **$8.56 \pm 10.70$** | **$0.75 \pm 1.99$** |
+| **Kruskal-Wallis $H$-test** | — | $H = 8.93, \mathbf{p = 0.0115}$ | $H = 43.50, \mathbf{p = 3.58 \times 10^{-10}}$ | $H = 4.98, p = 0.0829$ | $H = 0.92, p = 0.6316$ |
+
+### 4.3 Secondary Benchmark Study: Pre-Generated AI Recreations ($N=50$)
+Separately from the frontier models, the secondary dataset of 50 pre-generated AI recreations (5 versions for each of the 10 human prompts) exhibited an average LOC of $13.14 \pm 5.21$ and comment density of $2.39\% \pm 6.21\%$. Because these recreations solved short 15-line prompt tasks, their structural metrics closely matched the brevity of the human reference implementations, demonstrating that prompt scope strongly influences synthetic LOC volume.
 
 ---
 
 ## 5. Structural Trajectory Hypotheses: Human vs. Synthetic Code
 
-Rather than asserting unobservable cognitive states, we formulate three structural hypotheses to explain the observed stylometric differences:
+Rather than asserting unobservable cognitive states, we formulate two structural hypotheses to explain the observed stylometric differences:
 
 ### 5.1 Hardware Alignment vs. Pedagogical Abstraction
 - **Human Reference Trajectory**: Highly optimized systems code prioritizes hardware alignment: using bitwise shifts (`(index - 1) >>> 1`) for binary heap index calculations in JavaScript runtimes, or using raw pointer arithmetic in C kernels.
@@ -115,7 +119,7 @@ Rather than asserting unobservable cognitive states, we formulate three structur
 
 ## 6. Empirical Frequency Analysis of 7 Structural Patterns
 
-We evaluated the empirical occurrence count ($k / 126$ and %) of seven distinct structural patterns across all 126 synthetic code implementations:
+We evaluated the empirical occurrence count ($k / 126$) of seven structural patterns across all synthetic programs:
 
 | Pattern Identifier | Description | Observed Frequency ($k / 126$) | Percentage (%) |
 |---|---|---|---|
@@ -124,7 +128,7 @@ We evaluated the empirical occurrence count ($k / 126$ and %) of seven distinct 
 | **Pattern 3** | **Trivial Syntax-Echo Comments**: Writing comments that directly repeat line syntax (e.g., `# Increment counter`). | **28 / 126** | **22.2%** |
 | **Pattern 4** | **Functional Iterator Closures in Hot Loops**: Using `.every()`, `.map()`, or `.forEach()` in performance hot loops. | **5 / 126** | **4.0%** |
 | **Pattern 5** | **In-Loop Mutating Array Shifts**: Regressing runtime complexity from $O(N)$ to $O(N^2)$ via vector removals in loops. | **1 / 126** | **0.8%** |
-| **Pattern 6** | **Asynchronous State & Timer Lifecycle Leaks**: Omitting `clearTimeout()` or mutating subscriber lists live. | **0 / 126\*** | **0.0%\*** |
+| **Pattern 6** | **Asynchronous State & Timer Lifecycle Leaks**: Omitting `clearTimeout()` or mutating subscriber lists live.* | **0 / 126\*** | **0.0%\*** |
 | **Pattern 7** | **Compiler Vectorization Obstacles**: Using nested `std::min(std::max(...))` template calls that hinder SIMD auto-vectorization. | **1 / 126** | **0.8%** |
 
 *\*Note on Pattern 6*: Pattern 6 was identified during qualitative domain analysis of asynchronous primitives, but scored 0/126 in the quantitative dataset because Tier 2 async tasks (`task_12` Event Emitter and `task_14` TTL Cache) were skipped when OpenRouter API calls reached the hard payment budget limit.
@@ -144,13 +148,13 @@ Significant stylometric variance exists across the evaluated LLM families (align
 
 1. **Human Baseline Selection Bias (Construct Validity)**: Our human reference sample ($n=10$) consists of production-hardened routines from legendary engineers. Comparing zero-shot LLM output against battle-tested open-source code measures the gap between zero-shot machine output and hardened software, not an average human developer.
 2. **Zero-Shot vs. Iterative Refinement (Internal Validity)**: LLMs were evaluated strictly in a single-shot, un-assisted setting. In real-world software workflows, developers iterate with LLMs via multi-turn chat, compiler feedback, and code review, which significantly narrows the quality gap.
-3. **Sample Size Limitations (Statistical Validity)**: While $N=126$ synthetic generations provide sufficient statistical power for major metrics, the human sample ($n=10$) is small. We addressed this by applying non-parametric Mann-Whitney U tests, Holm-Bonferroni FWER corrections, and reporting 95% confidence intervals and rank-biserial effect sizes.
+3. **Sample Size & Uneven Allocation (Statistical Validity)**: While $N=76$ frontier generations provide high statistical power, the human sample ($n=10$) is small and Gemini was allocated 38 runs vs. 19 for GPT/Claude. We addressed this by applying non-parametric Mann-Whitney U tests, Holm-Bonferroni FWER corrections, Kruskal-Wallis inter-model tests, bootstrap 95% CIs, and rank-biserial effect sizes.
 
 ---
 
 ## 9. Conclusion
 
-This empirical case study demonstrates statistically significant stylometric differences between zero-shot LLM-generated code and production-hardened human reference implementations. Synthetic code exhibits greater volume (+174% LOC expansion), higher comment density, and a strong bias toward structural micro-fragmentation (54.8% of programs). Recognizing these empirical characteristics provides valuable insights for automated code evaluation, static analysis tools, and LLM-assisted software engineering workflows.
+This empirical case study demonstrates statistically significant stylometric differences between zero-shot LLM code and production-hardened human reference code. Synthetic code exhibits greater volume (+297% LOC expansion), higher comment density, and a strong bias toward structural micro-fragmentation (54.8% of programs). Recognizing these empirical characteristics provides valuable insights for automated code evaluation, static analysis tools, and LLM-assisted software engineering workflows.
 
 ---
 
@@ -161,3 +165,34 @@ This empirical case study demonstrates statistically significant stylometric dif
 3. Kabir, S., et al. (2023). *Who Answers It Better? An In-Depth Analysis of ChatGPT vs. Stack Overflow Answers*. Empirical Software Engineering.
 4. Nguyen, N. T., et al. (2023). *An Empirical Study of Code Security and Quality in Copilot-Generated Code*. IEEE/ACM ICSE.
 5. Ugare, S., et al. (2024). *Performance Bugs in LLM-Generated Code: Prevalence and Patterns*. PACMPL.
+
+---
+
+## Appendix A: Task Catalog & Reference Mapping Table
+
+| Task / Flow ID | Category | Language | Title / Task Prompt | Human Reference Source |
+|---|---|---|---|---|
+| **`flow_01`** | Benchmark Flow | JavaScript | React 16 Fiber Scheduler Min-Heap (`push`/`siftUp`) | Facebook React 16 (A. Clark / D. Abramov) |
+| **`flow_02`** | Benchmark Flow | JavaScript | React 16 Shallow Property Comparator (`shallowEqual`) | Facebook React 16 (D. Abramov) |
+| **`flow_03`** | Benchmark Flow | Go | Go 1.10 `strings.Builder.WriteString` | Go Standard Library (R. Cox / B. Fitzpatrick) |
+| **`flow_04`** | Benchmark Flow | Rust | Rust `slice::rotate_left` | Rust Standard Library Core Team |
+| **`flow_05`** | Benchmark Flow | C++ | PyTorch 1.0 `clamp_out` Tensor Operator | PyTorch Core (A. Paszke / S. Chintala) |
+| **`flow_06`** | Benchmark Flow | C | Redis 5.0 Radix Tree Insert (`raxInsert`) | Redis Core (S. Sanfilippo - antirez) |
+| **`flow_07`** | Benchmark Flow | TypeScript | TypeScript 3.0 Scanner (`isIdentifierStart`) | Microsoft TypeScript (A. Hejlsberg) |
+| **`flow_08`** | Benchmark Flow | C | Linux Kernel 4.14 eBPF Hashtable (`htab_map_lookup_elem`) | Linux Kernel (A. Starovoitov / D. Borkmann) |
+| **`flow_09`** | Benchmark Flow | Go | FastHTTP `caseInsensitiveCompare` | FastHTTP Engine (A. Valialkin) |
+| **`flow_10`** | Benchmark Flow | Rust | Rust `Vec::retain` In-Place Predicate Filtering | Rust Standard Library Core Team |
+| **`task_01`** | Research Task | Py / JS | LRU Cache with O(1) `get` and `put` | Benchmark Algorithmic Problem |
+| **`task_02`** | Research Task | Py / JS | CSV Email Line Parser & Regex Validation | Benchmark Algorithmic Problem |
+| **`task_03`** | Research Task | Py / JS | Dijkstra's Shortest Path Algorithm | Benchmark Algorithmic Problem |
+| **`task_04`** | Research Task | Py / JS | Thread-Safe Token Bucket Rate Limiter | Benchmark Algorithmic Problem |
+| **`task_05`** | Research Task | Py / JS | Shunting-Yard Infix to Postfix & Evaluator | Benchmark Algorithmic Problem |
+| **`task_06`** | Research Task | Py / JS | Trie (Prefix Tree) Data Structure | Benchmark Algorithmic Problem |
+| **`task_07`** | Research Task | Py / JS | Longest Palindromic Substring | Benchmark Algorithmic Problem |
+| **`task_08`** | Research Task | Py / JS | Overlapping Intervals Merge | Benchmark Algorithmic Problem |
+| **`task_09`** | Research Task | Py / JS | Rotated Sorted Array Binary Search | Benchmark Algorithmic Problem |
+| **`task_10`** | Research Task | Py / JS | Balanced Bracket Sequence Validation | Benchmark Algorithmic Problem |
+| **`task_11`** | Research Task | Py / JS | Exponential Backoff with Full Jitter | Benchmark Algorithmic Problem |
+| **`task_12`** | Research Task | Py / JS | Async Custom Event Emitter | Benchmark Algorithmic Problem |
+| **`task_13`** | Research Task | Py / JS | Async Task Queue with Concurrency Limit | Benchmark Algorithmic Problem |
+| **`task_14`** | Research Task | Py / JS | In-Memory TTL Key-Value Cache | Benchmark Algorithmic Problem |
