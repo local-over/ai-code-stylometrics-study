@@ -92,7 +92,7 @@ We queried three frontier LLM architectures via stateless OpenRouter API calls u
 
 ### 4.3 Dataset Reconciliation & Task Scope Isolation ($N=136$ Total Records)
 To ensure complete methodological transparency, the dataset consists of three non-overlapping task categories:
-1. **Primary Frontier LLM Dataset ($N=76$)**: Consists **purely of zero-shot OpenRouter generations across 10 algorithmic research tasks (`task_01` to `task_10`) in Python and JavaScript** produced by Google Gemini 3.5 Flash ($N=38$), OpenAI GPT-5.6 Sol ($N=19$), and Anthropic Claude Sonnet 4.6 ($N=19$).
+1. **Primary Frontier LLM Dataset ($N=76$)**: Consists **purely of zero-shot OpenRouter generations across 14 algorithmic research tasks (`task_01` to `task_14`) in Python and JavaScript** produced by Google Gemini 3.5 Flash ($N=38$), OpenAI GPT-5.6 Sol ($N=19$), and Anthropic Claude Sonnet 4.6 ($N=19$).
 2. **Human Reference Baseline ($n=10$)**: Consists of 10 standalone standard library routines (`flow_01` to `flow_10`) authored in JavaScript, Go, Rust, C++, C, and TypeScript by senior human maintainers prior to 2019.
 3. **Secondary Auxiliary AI Recreations ($N=50$)**: Consists of 50 pilot recreation generations produced by Google Gemini 3.5 Flash (5 independent runs per prompt for `flow_01` to `flow_10`).
 - **Total Dataset**: $76 + 10 + 50 = 136\text{ Master Records}$.
@@ -242,3 +242,7 @@ This empirical case study demonstrates statistically significant stylometric dif
 | **`task_08`** | Research Task | Py / JS | Overlapping Intervals Merge | Benchmark Algorithmic Problem |
 | **`task_09`** | Research Task | Py / JS | Rotated Sorted Array Binary Search | Benchmark Algorithmic Problem |
 | **`task_10`** | Research Task | Py / JS | Balanced Bracket Sequence Validation | Benchmark Algorithmic Problem |
+| **`task_11`** | Research Task | Py / JS | Exponential Backoff with Full Jitter | Benchmark Algorithmic Problem |
+| **`task_12`** | Research Task | Py / JS | Async Custom Event Emitter | Benchmark Algorithmic Problem |
+| **`task_13`** | Research Task | Py / JS | Async Task Queue with Concurrency Limit | Benchmark Algorithmic Problem |
+| **`task_14`** | Research Task | Py / JS | In-Memory TTL Key-Value Cache | Benchmark Algorithmic Problem |
