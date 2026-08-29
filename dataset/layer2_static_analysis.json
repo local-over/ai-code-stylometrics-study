@@ -1,0 +1,270 @@
+{
+  "python": {
+    "record_count": 30000,
+    "snippet_count": 120000,
+    "groups": {
+      "human": {
+        "loc": {
+          "mean": 14.47,
+          "median": 9.0,
+          "p95": 41.0
+        },
+        "cyclomatic_complexity": {
+          "mean": 4.11,
+          "median": 3.0,
+          "p95": 11.0
+        },
+        "max_nesting_depth": {
+          "mean": 3.81,
+          "median": 3.0,
+          "p95": 9.0
+        },
+        "command_injections": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0
+        },
+        "hardcoded_secrets": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0
+        },
+        "todo_stubs": {
+          "mean": 0.03,
+          "median": 0.0,
+          "p95": 0.0
+        }
+      },
+      "chatgpt": {
+        "loc": {
+          "mean": 9.64,
+          "median": 8.0,
+          "p95": 23.0
+        },
+        "cyclomatic_complexity": {
+          "mean": 2.67,
+          "median": 2.0,
+          "p95": 7.0
+        },
+        "max_nesting_depth": {
+          "mean": 2.15,
+          "median": 2.0,
+          "p95": 4.0
+        },
+        "command_injections": {
+          "mean": 0.01,
+          "median": 0.0,
+          "p95": 0.0
+        },
+        "hardcoded_secrets": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0
+        },
+        "todo_stubs": {
+          "mean": 0.01,
+          "median": 0.0,
+          "p95": 0.0
+        }
+      },
+      "dsc": {
+        "loc": {
+          "mean": 11.45,
+          "median": 11.0,
+          "p95": 22.0
+        },
+        "cyclomatic_complexity": {
+          "mean": 2.58,
+          "median": 2.0,
+          "p95": 6.0
+        },
+        "max_nesting_depth": {
+          "mean": 2.31,
+          "median": 2.0,
+          "p95": 4.0
+        },
+        "command_injections": {
+          "mean": 0.01,
+          "median": 0.0,
+          "p95": 0.0
+        },
+        "hardcoded_secrets": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0
+        },
+        "todo_stubs": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0
+        }
+      },
+      "qwen": {
+        "loc": {
+          "mean": 12.02,
+          "median": 9.0,
+          "p95": 33.0
+        },
+        "cyclomatic_complexity": {
+          "mean": 3.25,
+          "median": 2.0,
+          "p95": 8.0
+        },
+        "max_nesting_depth": {
+          "mean": 2.12,
+          "median": 2.0,
+          "p95": 4.0
+        },
+        "command_injections": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0
+        },
+        "hardcoded_secrets": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0
+        },
+        "todo_stubs": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0
+        }
+      }
+    }
+  },
+  "java": {
+    "record_count": 30000,
+    "snippet_count": 120000,
+    "groups": {
+      "human": {
+        "loc": {
+          "mean": 14.69,
+          "median": 10.0,
+          "p95": 41.0
+        },
+        "cyclomatic_complexity": {
+          "mean": 3.23,
+          "median": 2.0,
+          "p95": 9.0
+        },
+        "max_nesting_depth": {
+          "mean": 2.88,
+          "median": 2.0,
+          "p95": 7.0
+        },
+        "command_injections": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0
+        },
+        "hardcoded_secrets": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0
+        },
+        "todo_stubs": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0
+        }
+      },
+      "chatgpt": {
+        "loc": {
+          "mean": 11.49,
+          "median": 9.0,
+          "p95": 28.0
+        },
+        "cyclomatic_complexity": {
+          "mean": 2.39,
+          "median": 2.0,
+          "p95": 6.0
+        },
+        "max_nesting_depth": {
+          "mean": 2.09,
+          "median": 2.0,
+          "p95": 4.0
+        },
+        "command_injections": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0
+        },
+        "hardcoded_secrets": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0
+        },
+        "todo_stubs": {
+          "mean": 0.01,
+          "median": 0.0,
+          "p95": 0.0
+        }
+      },
+      "dsc": {
+        "loc": {
+          "mean": 13.86,
+          "median": 13.0,
+          "p95": 28.0
+        },
+        "cyclomatic_complexity": {
+          "mean": 2.18,
+          "median": 2.0,
+          "p95": 5.0
+        },
+        "max_nesting_depth": {
+          "mean": 2.38,
+          "median": 2.0,
+          "p95": 4.0
+        },
+        "command_injections": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0
+        },
+        "hardcoded_secrets": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0
+        },
+        "todo_stubs": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0
+        }
+      },
+      "qwen": {
+        "loc": {
+          "mean": 10.54,
+          "median": 7.0,
+          "p95": 30.0
+        },
+        "cyclomatic_complexity": {
+          "mean": 2.12,
+          "median": 1.0,
+          "p95": 5.0
+        },
+        "max_nesting_depth": {
+          "mean": 1.5,
+          "median": 2.0,
+          "p95": 4.0
+        },
+        "command_injections": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0
+        },
+        "hardcoded_secrets": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0
+        },
+        "todo_stubs": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p95": 0.0
+        }
+      }
+    }
+  }
+}

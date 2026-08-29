@@ -1,0 +1,62 @@
+{
+  "human_code": {
+    "valid_samples": 1947,
+    "total_list_comps": 607,
+    "avg_list_comps_per_func": 0.31176168464304055,
+    "total_append_calls": 1365,
+    "avg_append_calls_per_func": 0.7010785824345146,
+    "total_ternary_ifexp": 442,
+    "total_lambdas": 236,
+    "total_multi_assign": 26,
+    "avg_var_length": 5.569388841363744,
+    "total_single_char_vars": 2403,
+    "avg_single_char_vars_per_func": 1.234206471494607,
+    "snake_case_vars": 7894,
+    "camel_case_vars": 716
+  },
+  "chatgpt_code": {
+    "valid_samples": 1978,
+    "total_list_comps": 150,
+    "avg_list_comps_per_func": 0.07583417593528817,
+    "total_append_calls": 265,
+    "avg_append_calls_per_func": 0.1339737108190091,
+    "total_ternary_ifexp": 64,
+    "total_lambdas": 38,
+    "total_multi_assign": 13,
+    "avg_var_length": 4.135622511482842,
+    "total_single_char_vars": 759,
+    "avg_single_char_vars_per_func": 0.38372093023255816,
+    "snake_case_vars": 1708,
+    "camel_case_vars": 58
+  },
+  "dsc_code": {
+    "valid_samples": 1363,
+    "total_list_comps": 60,
+    "avg_list_comps_per_func": 0.04402054292002935,
+    "total_append_calls": 101,
+    "avg_append_calls_per_func": 0.07410124724871607,
+    "total_ternary_ifexp": 2,
+    "total_lambdas": 6,
+    "total_multi_assign": 0,
+    "avg_var_length": 3.2741182922400824,
+    "total_single_char_vars": 167,
+    "avg_single_char_vars_per_func": 0.12252384446074835,
+    "snake_case_vars": 369,
+    "camel_case_vars": 5
+  },
+  "qwen_code": {
+    "valid_samples": 1912,
+    "total_list_comps": 163,
+    "avg_list_comps_per_func": 0.0852510460251046,
+    "total_append_calls": 326,
+    "avg_append_calls_per_func": 0.1705020920502092,
+    "total_ternary_ifexp": 52,
+    "total_lambdas": 95,
+    "total_multi_assign": 0,
+    "avg_var_length": 3.0173881438375716,
+    "total_single_char_vars": 381,
+    "avg_single_char_vars_per_func": 0.19926778242677826,
+    "snake_case_vars": 1112,
+    "camel_case_vars": 28
+  }
+}

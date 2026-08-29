@@ -1,0 +1,390 @@
+{
+  "total_quadruplets": {
+    "python": 2000,
+    "java": 2000
+  },
+  "metrics": {
+    "python": {
+      "defensive_guard_clause": {
+        "human_code": 343,
+        "chatgpt_code": 165,
+        "dsc_code": 131,
+        "qwen_code": 242
+      },
+      "procedural_comments": {
+        "human_code": 73,
+        "dsc_code": 49,
+        "chatgpt_code": 32,
+        "qwen_code": 1
+      },
+      "temp_staging_return": {
+        "human_code": 182,
+        "qwen_code": 147,
+        "chatgpt_code": 233,
+        "dsc_code": 120
+      },
+      "python_type_annotations": {
+        "chatgpt_code": 142,
+        "human_code": 24,
+        "dsc_code": 9,
+        "qwen_code": 8
+      },
+      "docstring_google_sphinx": {
+        "dsc_code": 39,
+        "chatgpt_code": 62,
+        "qwen_code": 50,
+        "human_code": 2
+      },
+      "sys_import": {
+        "chatgpt_code": 30,
+        "qwen_code": 23,
+        "dsc_code": 13,
+        "human_code": 3
+      },
+      "enumerate_iteration": {
+        "human_code": 106,
+        "chatgpt_code": 36,
+        "dsc_code": 12
+      },
+      "numbered_step_comments": {
+        "human_code": 20,
+        "dsc_code": 1,
+        "qwen_code": 1,
+        "chatgpt_code": 2
+      },
+      "typing_imports": {
+        "chatgpt_code": 58,
+        "dsc_code": 3
+      },
+      "range_len_iteration": {
+        "human_code": 38,
+        "chatgpt_code": 38,
+        "qwen_code": 10,
+        "dsc_code": 5
+      },
+      "tuple_unpack_swap": {
+        "human_code": 8,
+        "chatgpt_code": 1,
+        "dsc_code": 1
+      },
+      "null_or_empty_head_guard": {
+        "human_code": 3
+      },
+      "shallow_grid_multiplication": {
+        "human_code": 1
+      },
+      "temp_variable_swap": {
+        "human_code": 1
+      }
+    },
+    "java": {
+      "temp_variable_swap": {
+        "human_code": 2
+      },
+      "defensive_guard_clause": {
+        "human_code": 326,
+        "chatgpt_code": 210,
+        "dsc_code": 84,
+        "qwen_code": 82
+      },
+      "procedural_comments": {
+        "chatgpt_code": 67,
+        "dsc_code": 44,
+        "qwen_code": 78
+      },
+      "null_or_empty_head_guard": {
+        "human_code": 4
+      },
+      "temp_staging_return": {
+        "chatgpt_code": 7,
+        "human_code": 4
+      },
+      "numbered_step_comments": {
+        "qwen_code": 3
+      }
+    }
+  },
+  "examples": {
+    "defensive_guard_clause": [
+      {
+        "hm_index": "gp176678",
+        "lang": "python",
+        "model": "chatgpt_code",
+        "matched_snippet": "                if len(node.values) == 1:\n                    return",
+        "full_code_ai": "def perform_dead_code_elimination(node):\n    import ast\n\n    # recursive AST traversal to perform reaching definitions analysis\n    class DefinitionFinder(ast.NodeVisitor):\n        def __init__(self):\n            self.defs = {}\n\n        def visit_FunctionDef(self, node):\n            self.defs = {}\n            for arg in node.args.args:\n                self.defs[arg.arg] = arg\n            self.gene",
+        "full_code_human": "def dead_code_elimination(node):\n  to_remove = set(def_[1] for def_ in annotate.unused(node)\n                  if not isinstance(def_[1], (gast.arguments, gast.For)))\n  for n in list(to_remove):\n    for succ in gast.walk(n):\n      if anno.getanno(succ, 'push', False):\n        to_remove.add(anno.getanno(succ, 'push'))\n  transformers.Remove(to_remove).visit(node)\n  anno.clearanno(node)\n  return node"
+      },
+      {
+        "hm_index": "gp216570",
+        "lang": "python",
+        "model": "dsc_code",
+        "matched_snippet": "    if response.status_code == 200:\n        return",
+        "full_code_ai": "import requests\n\ndef main(host):\n    response = requests.get(f'{host}/evaluate?value=123')\n    if response.status_code == 200:\n        return response.json()\n    else:\n        return None",
+        "full_code_human": "def main(host):\n    client = capnp.TwoPartyClient(host)\n    # Pass \"calculator\" to ez_restore (there's also a `restore` function that\n    # takes a struct or AnyPointer as an argument), and then cast the returned\n    # capability to it's proper type. This casting is due to capabilities not\n    # having a reference to their schema\n    calculator = client.bootstrap().cast_as(calculator_capnp.Calcula"
+      },
+      {
+        "hm_index": "gp157916",
+        "lang": "python",
+        "model": "chatgpt_code",
+        "matched_snippet": "    if len(args) > 0:\n        return",
+        "full_code_ai": "import sysconfig\n\ndef get_platform_config(*args):\n    platform_config = sysconfig.get_config_vars()\n    if len(args) > 0:\n        return [platform_config.get(arg) for arg in args]\n    return platform_config\n",
+        "full_code_human": "def get_config_vars(*args):\n    global _CONFIG_VARS\n    if _CONFIG_VARS is None:\n        _CONFIG_VARS = {}\n        # Normalized versions of prefix and exec_prefix are handy to have;\n        # in fact, these are the standard versions used most places in the\n        # distutils2 module.\n        _CONFIG_VARS['prefix'] = _PREFIX\n        _CONFIG_VARS['exec_prefix'] = _EXEC_PREFIX\n        _CONFIG_VARS['"
+      }
+    ],
+    "procedural_comments": [
+      {
+        "hm_index": "gp171028",
+        "lang": "python",
+        "model": "dsc_code",
+        "matched_snippet": "# Step 1",
+        "full_code_ai": "def stem(word):\n    \"\"\"Stem an English word and return the stemmed form.\"\"\"\n\n    # Step 1a\n    if word.endswith('ed'):\n        if word.endswith('ied'):\n            word = word[:-3]\n        elif len(word) > 4 and word[-1] in 'bcdfghjklmnpqrstvwxyz' and word[-2] in 'aeiou':\n            word = word[:-2]\n        else:\n            word = word[:-1]\n\n    # Step 1b\n    if word.endswith('es'):\n        if l",
+        "full_code_human": "def stem(self, word):\n        word = word.lower()\n        if len(word) <= 2:\n            return word\n        elif word in self.__special_words:\n            return self.__special_words[word]\n        # Map the different apostrophe characters to a single consistent one\n        word = (word.replace(\"\\u2019\", \"\\x27\")\n                    .replace(\"\\u2018\", \"\\x27\")\n                    .replace(\"\\u201B\", "
+      },
+      {
+        "hm_index": "gp143174",
+        "lang": "python",
+        "model": "dsc_code",
+        "matched_snippet": "# Process the",
+        "full_code_ai": "def _parse(self):\n    while True:\n        byte = yield\n        # Process the byte here\n        # ...",
+        "full_code_human": "def _parse(self):\n        timestamp = 0\n        invalid = False\n        while True:\n            byte = yield\n            hdr = byte\n            \n            # Sync packet.\n            if hdr == 0:\n                packets = 0\n                while True:\n                    # Check for final 1 bit after at least 5 all-zero sync packets\n                    if (packets >= 5) and (byte == 0x80):\n      "
+      },
+      {
+        "hm_index": "gp055388",
+        "lang": "python",
+        "model": "chatgpt_code",
+        "matched_snippet": "# compute",
+        "full_code_ai": "import numpy as np\n\ndef derivative_covariance_matrix(parameters, X):\n    # compute the covariance matrix\n    n = len(X)\n    cov = np.cov(X, rowvar=False)\n    \n    # compute the derivative of each element of the covariance matrix with respect to each parameter\n    dC_dtheta = np.zeros((n, n, len(parameters)))\n    for k in range(len(parameters)):\n        dC_dtheta[:, :, k] = np.multiply.outer(X[:, k",
+        "full_code_human": "def update_gradients_full(self, dL_dK, X, X2=None):\n    #def dK_dtheta(self, dL_dK, X, X2, target):\n        X,slices = X[:,:-1],index_to_slices(X[:,-1])\n        if X2 is None:\n            X2,slices2 = X,slices\n            K = np.zeros((X.shape[0], X.shape[0]))\n        else:\n            X2,slices2 = X2[:,:-1],index_to_slices(X2[:,-1])\n        \n        vyt = self.variance_Yt\n        vyx = self.varia"
+      }
+    ],
+    "temp_staging_return": [
+      {
+        "hm_index": "gp242828",
+        "lang": "python",
+        "model": "qwen_code",
+        "matched_snippet": "context = {'general_analysis_result': general_analysis_result, 'component_info': component_info}\n    return context",
+        "full_code_ai": "def multi_exposure_general_report_extractor(impact_report, component_metadata):\n    general_analysis_result = impact_report.get_general_analysis_result()\n    component_info = component_metadata.get_component_info()\n    context = {'general_analysis_result': general_analysis_result, 'component_info': component_info}\n    return context",
+        "full_code_human": "def multi_exposure_general_report_extractor(impact_report, component_metadata):\n    context = {}\n    extra_args = component_metadata.extra_args\n    multi_exposure = impact_report.multi_exposure_impact_function\n    analysis_layer = impact_report.analysis\n    provenances = [\n        impact_function.provenance for impact_function in (\n            multi_exposure.impact_functions)]\n    debug_mode = mul"
+      },
+      {
+        "hm_index": "gp171033",
+        "lang": "python",
+        "model": "chatgpt_code",
+        "matched_snippet": "stemmer = ItalianStemmer()\n    return stemmer",
+        "full_code_ai": "from nltk.stem.snowball import ItalianStemmer\n\ndef stem_italian_word(word):\n    stemmer = ItalianStemmer()\n    return stemmer.stem(word)\n",
+        "full_code_human": "def stem(self, word):\n        word = word.lower()\n        step1_success = False\n        # All acute accents are replaced by grave accents.\n        word = (word.replace(\"\\xE1\", \"\\xE0\")\n                    .replace(\"\\xE9\", \"\\xE8\")\n                    .replace(\"\\xED\", \"\\xEC\")\n                    .replace(\"\\xF3\", \"\\xF2\")\n                    .replace(\"\\xFA\", \"\\xF9\"))\n        # Every occurrence of 'u' a"
+      },
+      {
+        "hm_index": "gp171033",
+        "lang": "python",
+        "model": "dsc_code",
+        "matched_snippet": "stemmer = PorterStemmer()\n    return stemmer",
+        "full_code_ai": "from nltk.stem import PorterStemmer\n\ndef stem(self, word):\n    stemmer = PorterStemmer()\n    return stemmer.stem(word)",
+        "full_code_human": "def stem(self, word):\n        word = word.lower()\n        step1_success = False\n        # All acute accents are replaced by grave accents.\n        word = (word.replace(\"\\xE1\", \"\\xE0\")\n                    .replace(\"\\xE9\", \"\\xE8\")\n                    .replace(\"\\xED\", \"\\xEC\")\n                    .replace(\"\\xF3\", \"\\xF2\")\n                    .replace(\"\\xFA\", \"\\xF9\"))\n        # Every occurrence of 'u' a"
+      }
+    ],
+    "python_type_annotations": [
+      {
+        "hm_index": "gp254949",
+        "lang": "python",
+        "model": "chatgpt_code",
+        "matched_snippet": "def internal_reply_getter(user: str, msg: str, context: str, step: int, ignore_object_errors: bool) ->",
+        "full_code_ai": "def internal_reply_getter(user: str, msg: str, context: str, step: int, ignore_object_errors: bool) -> str:\n    # implementation here\n    pass",
+        "full_code_human": "def _getreply(self, user, msg, context='normal', step=0, ignore_object_errors=True):\n        # Needed to sort replies?\n        if 'topics' not in self.master._sorted:\n            raise RepliesNotSortedError(\"You must call sort_replies() once you are done loading RiveScript documents\")\n        # Initialize the user's profile?\n        topic = self.master.get_uservar(user, \"topic\")\n        if topic i"
+      },
+      {
+        "hm_index": "gp151474",
+        "lang": "python",
+        "model": "chatgpt_code",
+        "matched_snippet": "def compile_stan_model(spec: Model, reset: bool = True) ->",
+        "full_code_ai": "from bambi.backends.stan import StanBackEnd\nfrom bambi.models import Model\n\ndef compile_stan_model(spec: Model, reset: bool = True) -> StanBackEnd:\n    backend = StanBackEnd(spec)\n    if reset:\n        backend.reset()\n    backend.compile()\n    return backend\n",
+        "full_code_human": "def build(self, spec, reset=True):\n        if reset:\n            self.reset()\n        n_cases = len(spec.y.data)\n        self.data.append('int<lower=1> N;')\n        self.X['N'] = n_cases\n        def _sanitize_name(name):\n            ''' Stan only allows alphanumeric chars and underscore, and\n            variable names must begin with a letter. Additionally, Stan\n            reserves a few hundred "
+      },
+      {
+        "hm_index": "gp066687",
+        "lang": "python",
+        "model": "chatgpt_code",
+        "matched_snippet": "def event_code(event_tx: str, ab_des: str) ->",
+        "full_code_ai": "def event_code(event_tx: str, ab_des: str) -> int:\n    # implementation details here\n    return event_cd\n",
+        "full_code_human": "def event_cd(cls, event_tx, ab_des):\n        _event_tx = event_tx.lower()\n        _ab_des = ab_des.lower()\n        # Generic out(event_cd:2)\n        if _event_tx in cls.EVENT_02_GENERIC_OUT_FLYBALL:\n            return 2\n        elif _event_tx in cls.EVENT_02_GENERIC_OUT_LINEDRIVE:\n            return 2\n        elif _event_tx in cls.EVENT_02_GENERIC_OUT_POPUP:\n            return 2\n        elif _even"
+      }
+    ],
+    "docstring_google_sphinx": [
+      {
+        "hm_index": "gp314384",
+        "lang": "python",
+        "model": "dsc_code",
+        "matched_snippet": "\"\"\"Read values.\n\n        Args:\n            vals (list): list of strings representing values\n        \"\"\"",
+        "full_code_ai": "class MyClass:\n    def read(self, vals):\n        \"\"\"Read values.\n\n        Args:\n            vals (list): list of strings representing values\n        \"\"\"\n        for val in vals:\n            print(val)",
+        "full_code_human": "def read(self, vals):\n        i = 0\n        if len(vals[i]) == 0:\n            self.title_of_design_condition = None\n        else:\n            self.title_of_design_condition = vals[i]\n        i += 1\n        if len(vals[i]) == 0:\n            self.unkown_field = None\n        else:\n            self.unkown_field = vals[i]\n        i += 1\n        if len(vals[i]) == 0:\n            self.design_stat_heating"
+      },
+      {
+        "hm_index": "gp006211",
+        "lang": "python",
+        "model": "chatgpt_code",
+        "matched_snippet": "\"\"\"\n    Shows the current file location.\n\n    Returns:\n        str: A string representation of the current file location.\n    \"\"\"",
+        "full_code_ai": "def show_location():\n    \"\"\"\n    Shows the current file location.\n\n    Returns:\n        str: A string representation of the current file location.\n    \"\"\"\n    import os\n    return os.path.abspath(__file__)\n",
+        "full_code_human": "def print_location(proc_obj):\n    i_stack = proc_obj.curindex\n    if i_stack is None or proc_obj.stack is None:\n        return False\n    core_obj = proc_obj.core\n    dbgr_obj = proc_obj.debugger\n    intf_obj = dbgr_obj.intf[-1]\n    # Evaluation routines like \"exec\" don't show useful location\n    # info. In these cases, we will use the position before that in\n    # the stack.  Hence the looping bel"
+      },
+      {
+        "hm_index": "gp065126",
+        "lang": "python",
+        "model": "chatgpt_code",
+        "matched_snippet": "\"\"\"\n    Wrapper around a NLTK SnowballStemmer, which includes stop words for\n    each language.\n    Args:\n        stemmer (SnowballStemmer): Stemmer instance that performs the stemming.\n        token (lunr.Token): The token to stem.\n        i (int): The index of the token in a set.\n        tokens (list): A list of tokens representing the set.\n    \"\"\"",
+        "full_code_ai": "from nltk.stem.snowball import SnowballStemmer\n\ndef stem_token_with_stopwords(stemmer, token, i, tokens):\n    \"\"\"\n    Wrapper around a NLTK SnowballStemmer, which includes stop words for\n    each language.\n    Args:\n        stemmer (SnowballStemmer): Stemmer instance that performs the stemming.\n        token (lunr.Token): The token to stem.\n        i (int): The index of the token in a set.\n       ",
+        "full_code_human": "def nltk_stemmer(stemmer, token, i=None, tokens=None):\n    def wrapped_stem(token, metadata=None):\n        return stemmer.stem(token)\n    return token.update(wrapped_stem)"
+      }
+    ],
+    "sys_import": [
+      {
+        "hm_index": "gp225233",
+        "lang": "python",
+        "model": "chatgpt_code",
+        "matched_snippet": "import sys",
+        "full_code_ai": "import sys\n\ndef compute_max_stack_usage(code_list):\n    max_depth = 0\n    current_depth = 0\n    for code in code_list:\n        if code == '[':\n            current_depth += 1\n            max_depth = max(max_depth, current_depth)\n        elif code == ']':\n            current_depth -= 1\n    return max_depth\n",
+        "full_code_human": "def _compute_stacksize(self):\n        # This is done by scanning the code, and computing for each opcode\n        # the stack state at the opcode.\n        code = self.code\n        # A mapping from labels to their positions in the code list\n        label_pos = dict((op, pos)\n                         for pos, (op, arg) in enumerate(code)\n                         if isinstance(op, Label))\n        # sf"
+      },
+      {
+        "hm_index": "gp141196",
+        "lang": "python",
+        "model": "chatgpt_code",
+        "matched_snippet": "import sys",
+        "full_code_ai": "def main_mon(argv):\n    # implementation of the main_mon function here\n\nif __name__ == \"__main__\":\n    import sys\n    main_mon(sys.argv)\n",
+        "full_code_human": "def main(argv):\n    input_file = \"\"\n    output_file = \"\"\n    monitor = None\n    formula = None\n    trace = None\n    iformula = None\n    itrace = None\n    isys = None\n    online = False\n    fuzzer = False\n    l2m = False\n    debug = False\n    rounds = 1\n    server_port = 8080\n    webservice = False\n    help_str_extended = \"fodtlmon V 0.1 .\\n\" + \\\n                        \"For more information see fo"
+      },
+      {
+        "hm_index": "gp029895",
+        "lang": "python",
+        "model": "chatgpt_code",
+        "matched_snippet": "import sys",
+        "full_code_ai": "import sys\nfrom spyder.app import start\n\ndef start_spyder(single_instance_mode=True):\n    if single_instance_mode:\n        start.mainwindow(1, sys.argv)\n    else:\n        start.mainwindow(0, sys.argv)\n",
+        "full_code_human": "def main():\r\n    # Parse command line options\n    if running_under_pytest():\n        try:\n            from unittest.mock import Mock\n        except ImportError:\n            from mock import Mock # Python 2\n\n        options = Mock()\n        options.new_instance = False\n        options.reset_config_files = False\n        options.debug_info = None\n        args = None\n    else:\n        options, args = "
+      }
+    ],
+    "enumerate_iteration": [
+      {
+        "hm_index": "gp176678",
+        "lang": "python",
+        "model": "chatgpt_code",
+        "matched_snippet": "for i, elt in enumerate(",
+        "full_code_ai": "def perform_dead_code_elimination(node):\n    import ast\n\n    # recursive AST traversal to perform reaching definitions analysis\n    class DefinitionFinder(ast.NodeVisitor):\n        def __init__(self):\n            self.defs = {}\n\n        def visit_FunctionDef(self, node):\n            self.defs = {}\n            for arg in node.args.args:\n                self.defs[arg.arg] = arg\n            self.gene",
+        "full_code_human": "def dead_code_elimination(node):\n  to_remove = set(def_[1] for def_ in annotate.unused(node)\n                  if not isinstance(def_[1], (gast.arguments, gast.For)))\n  for n in list(to_remove):\n    for succ in gast.walk(n):\n      if anno.getanno(succ, 'push', False):\n        to_remove.add(anno.getanno(succ, 'push'))\n  transformers.Remove(to_remove).visit(node)\n  anno.clearanno(node)\n  return node"
+      },
+      {
+        "hm_index": "gp045969",
+        "lang": "python",
+        "model": "chatgpt_code",
+        "matched_snippet": "for i, tok in enumerate(",
+        "full_code_ai": "import collections\nimport itertools\nfrom torchtext.vocab import Vocab, build_vocab_from_iterator\n\n\ndef build_vocab(sents, **kwargs):\n    def yield_tokens(sents):\n        for sent in sents:\n            yield from sent\n\n    specials = list(kwargs.get('specials', []))\n    tok2idx = {}\n    if specials:\n        tok2idx.update({tok: i for i, tok in enumerate(specials)})\n    counter = collections.Counter",
+        "full_code_human": "def fit(self, sents, **kwargs):\n        tokens = list(itertools.chain.from_iterable(sents))\n        counter = Counter(tokens)\n        self.vocab = self.build_vocab(counter, **kwargs)"
+      },
+      {
+        "hm_index": "gp219035",
+        "lang": "python",
+        "model": "chatgpt_code",
+        "matched_snippet": "for idx, char in enumerate(",
+        "full_code_ai": "def parse_arguments():\n    import os\n    import argparse\n    \n    parser = argparse.ArgumentParser(description='Responsible for parsing arguments from the command line.')\n    \n    if not os.environ.get('SHUTIT_OPTIONS'):\n        parser.add_argument('--create_skeleton', action='store_true', help='Create a ShutIt skeleton module.')\n        parser.add_argument('--quiet', '-q', action='store_true', he",
+        "full_code_human": "def parse_args(self):\n\t\tr\"\"\"Responsible for parsing arguments from the command line.\n\t\tEnvironment variables:\n\t\tSHUTIT_OPTIONS:\n\t\tLoads command line options from the environment (if set).\n\t\tBehaves like GREP_OPTIONS:\n\t\t\t- space separated list of arguments\n\t\t\t- backslash before a space escapes the space separation\n\t\t\t- backslash before a backslash is interpreted as a single backslash\n\t\t\t- all other"
+      }
+    ],
+    "numbered_step_comments": [
+      {
+        "hm_index": "gp171028",
+        "lang": "python",
+        "model": "dsc_code",
+        "matched_snippet": "# Step 1",
+        "full_code_ai": "def stem(word):\n    \"\"\"Stem an English word and return the stemmed form.\"\"\"\n\n    # Step 1a\n    if word.endswith('ed'):\n        if word.endswith('ied'):\n            word = word[:-3]\n        elif len(word) > 4 and word[-1] in 'bcdfghjklmnpqrstvwxyz' and word[-2] in 'aeiou':\n            word = word[:-2]\n        else:\n            word = word[:-1]\n\n    # Step 1b\n    if word.endswith('es'):\n        if l",
+        "full_code_human": "def stem(self, word):\n        word = word.lower()\n        if len(word) <= 2:\n            return word\n        elif word in self.__special_words:\n            return self.__special_words[word]\n        # Map the different apostrophe characters to a single consistent one\n        word = (word.replace(\"\\u2019\", \"\\x27\")\n                    .replace(\"\\u2018\", \"\\x27\")\n                    .replace(\"\\u201B\", "
+      },
+      {
+        "hm_index": "gp289533",
+        "lang": "python",
+        "model": "qwen_code",
+        "matched_snippet": "# Step 1",
+        "full_code_ai": "# Step 1: Choose one center uniformly at random from the data points",
+        "full_code_human": "def kmeans_pp(data, k, centers=None):\n    # TODO: what if there is missing data for a given gene?\n    # missing data could be if all the entires are -1.\n    genes, cells = data.shape\n    if sparse.issparse(data) and not sparse.isspmatrix_csc(data):\n        data = sparse.csc_matrix(data)\n    num_known_centers = 0\n    if centers is None:\n        centers = np.zeros((genes, k))\n    else:\n        num_k"
+      },
+      {
+        "hm_index": "gp192628",
+        "lang": "python",
+        "model": "chatgpt_code",
+        "matched_snippet": "# Step 1",
+        "full_code_ai": "from pyquil import Program\nfrom pyquil.gates import H, X, Z, CNOT\nfrom typing import List\n\n\ndef grover_algorithm(oracle: Program, qubits: List[int], num_iter: int = None) -> Program:\n    if not num_iter:\n        num_iter = round((pi/4) * sqrt(len(qubits)))\n\n    grover_program = Program()\n\n    # Step 1: Apply Hadamard gates to all qubits\n    for qubit in qubits:\n        grover_program += H(qubit)\n\n",
+        "full_code_human": "def oracle_grover(oracle: Program, qubits: List[int], num_iter: int = None) -> Program:\n        if num_iter is None:\n            num_iter = int(round(np.pi * 2 ** (len(qubits) / 2.0 - 2.0)))\n        uniform_superimposer = Program().inst([H(qubit) for qubit in qubits])\n        amp_prog = amplification_circuit(uniform_superimposer, oracle, qubits, num_iter)\n        return amp_prog"
+      }
+    ],
+    "typing_imports": [
+      {
+        "hm_index": "gp322228",
+        "lang": "python",
+        "model": "chatgpt_code",
+        "matched_snippet": "from typing import ",
+        "full_code_ai": "from typing import Dict, List, Set, Tuple\n\n# Define types used in the function\nDim = Tuple[int, int]\n\n# Define type aliases to make the function signature more clear\nNode = Tuple[str, Dim, str, Dim, Set[str], str]\nEdge = Dict[str, List[Tuple[str, str]]]\n\ndef make_network(nodes: List[Node], edges: Edge) -> None:\n    # Your implementation here\n    pass  # Placeholder until implementation is added\n",
+        "full_code_human": "def make_network_graph(compact, expression_names, lookup_names):\n  nodes = set()\n#   edges = defaultdict(set) # parent -> (child, extra)\n  \n  var_name_dict = dict()\n  if expression_names:\n    for e in graphviz_items: # e: Expression\n      if e in expression_names:\n        var_name_dict[e.vindex] = expression_names[e]\n  \n  rnn_bldr_name = defaultdict(lambda: chr(len(rnn_bldr_name)+ord('A')))\n  def "
+      },
+      {
+        "hm_index": "gp302364",
+        "lang": "python",
+        "model": "chatgpt_code",
+        "matched_snippet": "from typing import ",
+        "full_code_ai": "from typing import Dict\n\ndef get_fe_command(command_name: str, **kwargs: Dict[str, str]) -> str:\n    if command_name == \"LV\":\n        if \"Vd\" in kwargs and \"Vg\" in kwargs:\n            fe_command = f\"{command_name} {kwargs['Vd']} {kwargs['Vg']}\"\n        else:\n            raise ValueError(\"LV command requires Vd and Vg keyword arguments\")\n    elif command_name == \"TDAC\":\n        if \"Col\" in kwargs a",
+        "full_code_human": "def get_commands(self, command_name, **kwargs):\r\n        chip_id = kwargs.pop(\"ChipID\", self.chip_id_bitarray)\n        commands = []\n        if command_name == \"zeros\":\n            bv = bitarray(endian='little')\n            if \"length\" in kwargs:\n                bv += bitarray(kwargs[\"length\"], endian='little')  # initialized from int, bits may be random\n            elif kwargs:\n                ra"
+      },
+      {
+        "hm_index": "gp023246",
+        "lang": "python",
+        "model": "chatgpt_code",
+        "matched_snippet": "from typing import ",
+        "full_code_ai": "import pty\nimport os\nfrom typing import Optional, Tuple\n\ndef start_command_in_child_process(command: str, preexec_fn: Optional[callable] = None, \ndimensions: Optional[Tuple[int, int]] = None) -> pty.PtyProcess:\n    if dimensions:\n        master, slave = pty.openpty()\n        rows, columns = dimensions\n    else:\n        master, slave = pty.openpty()\n        rows, columns = os.get_terminal_size()\n  ",
+        "full_code_human": "def spawn(\n            cls, argv, cwd=None, env=None, echo=True, preexec_fn=None,\n            dimensions=(24, 80)):\n        # Note that it is difficult for this method to fail.\n        # You cannot detect if the child process cannot start.\n        # So the only way you can tell if the child process started\n        # or not is to try to read from the file descriptor. If you get\n        # EOF immedi"
+      }
+    ],
+    "range_len_iteration": [
+      {
+        "hm_index": "gp098506",
+        "lang": "python",
+        "model": "chatgpt_code",
+        "matched_snippet": "for i in range(len(",
+        "full_code_ai": "def incremental_sync(change_list):\n    # Add your implementation here\n    synced_data = []\n    for change in change_list:\n        if change['type'] == 'add':\n            synced_data.append(change['data'])\n        elif change['type'] == 'edit':\n            for i in range(len(synced_data)):\n                if synced_data[i]['id'] == change['id']:\n                    synced_data[i].update(change['dat",
+        "full_code_human": "def incremental(self, allow_deletion=False,\n                    change_list_uri=None, from_datetime=None):\n        self.logger.debug(\"Starting incremental sync\")\n        # 0. Sanity checks\n        if (len(self.mapper) < 1):\n            raise ClientFatalError(\n                \"No source to destination mapping specified\")\n        if (self.mapper.unsafe()):\n            raise ClientFatalError(\n       "
+      },
+      {
+        "hm_index": "gp055388",
+        "lang": "python",
+        "model": "chatgpt_code",
+        "matched_snippet": "for k in range(len(",
+        "full_code_ai": "import numpy as np\n\ndef derivative_covariance_matrix(parameters, X):\n    # compute the covariance matrix\n    n = len(X)\n    cov = np.cov(X, rowvar=False)\n    \n    # compute the derivative of each element of the covariance matrix with respect to each parameter\n    dC_dtheta = np.zeros((n, n, len(parameters)))\n    for k in range(len(parameters)):\n        dC_dtheta[:, :, k] = np.multiply.outer(X[:, k",
+        "full_code_human": "def update_gradients_full(self, dL_dK, X, X2=None):\n    #def dK_dtheta(self, dL_dK, X, X2, target):\n        X,slices = X[:,:-1],index_to_slices(X[:,-1])\n        if X2 is None:\n            X2,slices2 = X,slices\n            K = np.zeros((X.shape[0], X.shape[0]))\n        else:\n            X2,slices2 = X2[:,:-1],index_to_slices(X2[:,-1])\n        \n        vyt = self.variance_Yt\n        vyx = self.varia"
+      },
+      {
+        "hm_index": "gp295126",
+        "lang": "python",
+        "model": "chatgpt_code",
+        "matched_snippet": "for i in range(len(",
+        "full_code_ai": "def create_X(m_values, m_velocities):\n    X = []\n    for i in range(len(m_values)):\n        X.append(m_values[i][0])\n        X.append(m_values[i][1])\n        X.append(m_velocities[i][0])\n        X.append(m_velocities[i][1])\n    return X\n",
+        "full_code_human": "def dx_orbit_sys(t, X):\n    (m1x, m1y,\n     m2x, m2y,\n     m3x, m3y,\n     m4x, m4y,\n     m1vx, m1vy,\n     m2vx, m2vy,\n     m3vx, m3vy,\n     m4vx, m4vy) = X\n    m_moon1 = 7.342*(10**22)  # kg\n    m_moon2 = 7.342*(10**22)  # kg\n    m_moon3 = 7.342*(10**22)  # kg\n    m_moon4 = 7.342*(10**22)  # kg\n    G = 6.67408*(10**-11)  # m**3 kg**\u22121 s**\u22122\n    dm12 = sqrt((m1x - m2x)**2 + (m1y - m2y)**2)\n    dm13"
+      }
+    ],
+    "tuple_unpack_swap": [
+      {
+        "hm_index": "gp280517",
+        "lang": "python",
+        "model": "chatgpt_code",
+        "matched_snippet": "start, end = end, start",
+        "full_code_ai": "def filter_utr(ex):\n    filtered_exons = []\n    for start, end in ex:\n        if end < start:\n            start, end = end, start\n        if start >= thickEnd or end <= thickStart:\n            continue\n        filtered_exons.append((max(start, thickStart), min(end, thickEnd)))\n    return filtered_exons \n",
+        "full_code_human": "def _filter_utr(self, ex):\n        # define coding region\n        coding_start = int(self.bed_tuple.thickStart)\n        coding_end = int(self.bed_tuple.thickEnd)\n        if (coding_end - coding_start) < 3:\n            # coding regions should have at least one codon, otherwise the\n            # region is invalid and does not indicate an actually coding region\n            logger.debug('{0} has an in"
+      },
+      {
+        "hm_index": "gp262952",
+        "lang": "python",
+        "model": "dsc_code",
+        "matched_snippet": "self, other = other, self",
+        "full_code_ai": "def common(self, other):\n    \"\"\"Find the shared part of two multipliers. This is the largest multiplier\n    which can be safely subtracted from both the originals. This may\n    return the \"zero\" multiplier.\"\"\"\n    while other:\n        self, other = other, self % other\n    return self",
+        "full_code_human": "def common(self, other):\n\t\tmandatory = min(self.mandatory, other.mandatory)\n\t\toptional = min(self.optional, other.optional)\n\t\treturn multiplier(mandatory, mandatory + optional)"
+      }
+    ],
+    "null_or_empty_head_guard": [],
+    "shallow_grid_multiplication": [],
+    "temp_variable_swap": []
+  }
+}
