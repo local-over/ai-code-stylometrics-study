@@ -2,7 +2,8 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Zenodo Dataset: 507,045 Programs](https://img.shields.io/badge/Zenodo-DOI%2010.5281%2Fzenodo.15423067-blue.svg)](https://zenodo.org/records/15423067)
-[![Master PDF Paper](https://img.shields.io/badge/Paper-Master%20PDF%20Download-red.svg)](paper/research_paper.pdf)
+[![Typst Vector PDF Paper](https://img.shields.io/badge/Paper-Typst%20Vector%20PDF-red.svg)](paper/research_paper.pdf)
+[![Typst Document Markup](https://img.shields.io/badge/Paper-Typst%20Source%20Markup-purple.svg)](paper/research_paper.typ)
 [![Master Markdown Paper](https://img.shields.io/badge/Paper-Master%20Markdown-emerald.svg)](paper/research_paper.md)
 
 > **Author**: Hassan Elkady  
@@ -36,11 +37,16 @@ ai_code_stylometrics_study/
 │   │   ├── 07_mathematical_proofs.md
 │   │   ├── 08_conclusion.md
 │   │   └── 09_references.md
-│   ├── research_paper.pdf                   # Assembled Master Publication PDF (Chrome Headless A4)
+│   ├── research_paper.typ                   # Native Typst Scientific Paper Markup (LaTeX Successor)
+│   ├── research_paper.pdf                   # Typst 0.15.0 Vector PDF (Publication Grade)
 │   ├── research_paper.md                    # Assembled Master Anti-Slop Markdown Paper
-│   └── loc_comparison_chart.png             # High-resolution Matplotlib figure
+│   ├── fig1_vertical_airiness.png           # Figure 1: Vertical Whitespace Airiness % Chart
+│   ├── fig2_complexity_nesting.png          # Figure 2: Cyclomatic Complexity & Nesting Depth Chart
+│   ├── fig3_naming_stylometrics.png         # Figure 3: Single-Letter Variable Suppression Chart
+│   └── fig4_security_flaws.png              # Figure 4: Security Vulnerability Flaw Rates Chart
 ├── scripts/
-│   ├── assemble_master_paper.py             # Section-by-section assembly & PDF build script
+│   ├── build_typst_paper.py                 # Typst scientific paper authoring & compilation script
+│   ├── generate_paper_graphs.py             # 300 DPI Matplotlib graph generator script
 │   ├── layer1_ingest_sample.py              # Layer 1 Ingestion & Stratified Subsampling
 │   ├── layer2_static_analysis.py            # Layer 2 Full-Scale Static Analysis
 │   ├── layer3_stylometric_extraction.py     # Layer 3 Full-Scale Stylometric Extraction
@@ -51,9 +57,10 @@ ai_code_stylometrics_study/
 
 ---
 
-## 📄 Section-by-Section Master Paper Downloads
+## 📄 Scientific Paper Downloads & Markup Sources
 
-- **Master PDF Paper**: [`paper/research_paper.pdf`](paper/research_paper.pdf)
+- **Typst Vector PDF Paper**: [`paper/research_paper.pdf`](paper/research_paper.pdf)
+- **Typst Source Markup**: [`paper/research_paper.typ`](paper/research_paper.typ)
 - **Master Markdown Paper**: [`paper/research_paper.md`](paper/research_paper.md)
 - **Modular Sections Directory**: [`paper/sections/`](paper/sections/)
 
