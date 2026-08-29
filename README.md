@@ -31,50 +31,48 @@ Evaluated via Mann-Whitney U test with Holm-Bonferroni FWER correction, non-para
 | **Return Statement Count** | $1.70 \pm 1.49$ [0.9, 2.6] | $3.16 \pm 2.31$ [2.7, 3.7] | 219.0 | $p = 0.0272$ | $p_{\text{adj}} = 0.0816$ | **$r_{\text{rb}} = +0.424$** (Med-Large) | Marginally Significant |
 | **Vertical Whitespace (%)** | $5.54\% \pm 6.95\%$ [1.8, 9.8] | $17.47\% \pm 4.88\%$ [16.4, 18.5] | 71.5 | $p = 3.32 \times 10^{-5}$ | **$p_{\text{adj}} = 0.0002$** | **$r_{\text{rb}} = +0.812$** (Massive) | **Significant ($p < 0.01$)** |
 
-```
-Human Reference (n=10)   : [15.0 LOC] █
-GPT-5.6 Sol (N=19)       : [54.2 LOC] ███████▌
-Gemini 3.5 Flash (N=38)  : [55.4 LOC] ███████▋
-Claude Sonnet 4.6 (N=19) : [73.5 LOC] ██████████
-```
+![Figure 1: Mean Lines of Code (LOC) Expansion Across Author Groups](paper/loc_comparison_chart.png)
 
 ---
 
-## 🔬 Task Complexity Evaluation: Short vs. Complex Tasks Within Frontier LLMs ($N=76$)
+## 🔬 Per-Model Narrow Task Sub-Analysis
 
-To isolate whether code bloat is driven by model behavior or task scope, we partitioned the 76 frontier generations across Gemini, GPT, and Claude by task complexity:
-- **Focused / Short Tasks ($N=28$)** (CSV Email, Interval Merge, Rotated Binary Search, Bracket Validation): $\text{Mean LOC} = 41.07 \pm 21.17$ LOC.
-- **Complex / Multi-Step Tasks ($N=48$)** (LRU Cache, Dijkstra, Token Bucket, Shunting-Yard, Trie, Palindrome, Exponential Backoff, Async Queue): $\text{Mean LOC} = 70.44 \pm 25.29$ LOC.
-- **Mann-Whitney U Test**: $U = 247.0, \mathbf{p = 4.82 \times 10^{-6}}$ (Rank-biserial effect size $r_{\text{rb}} = +0.632$).
-- **Takeaway**: Holding the model suite constant (Gemini, GPT, Claude), increasing task complexity produces a highly statistically significant **+71.5% LOC expansion ($p < 0.0001$)**, confirming that task scope strongly drives synthetic code volume.
+Testing each of the three frontier models individually on narrow tasks (`task_02`, `task_08`, `task_09`, `task_10`) against the human baseline ($n=10, 15.00 \pm 6.78$ LOC):
+
+| Model | Narrow Task Count ($N$) | Mean Narrow LOC ($\pm \text{SD}$) | Mann-Whitney $U$ | Raw $p$-value | Holm-Bonferroni $p_{\text{adj}}$ | Significance vs Human Baseline |
+|---|---|---|---|---|---|---|
+| **OpenAI GPT-5.6 Sol** | $N=7$ | $32.00 \pm 19.76$ | 13.5 | $p = 0.0401$ | **$p_{\text{adj}} = 0.0401$** | **Significant ($p < 0.05$)** |
+| **Google Gemini 3.5 Flash** | $N=14$ | $34.57 \pm 6.97$ | 2.0 | $p = 7.57 \times 10^{-5}$ | **$p_{\text{adj}} = 0.0002$** | **Significant ($p < 0.01$)** |
+| **Anthropic Claude Sonnet 4.6** | $N=7$ | $63.14 \pm 27.53$ | 5.0 | $p = 0.0039$ | **$p_{\text{adj}} = 0.0079$** | **Significant ($p < 0.01$)** |
 
 ---
 
-## 📈 Per-Model Breakdown & Kruskal-Wallis Inter-Model Significance Tests
+## 📈 Per-Model Breakdown & Multiple-Testing Corrected Kruskal-Wallis Significance Tests
 
 | Model Sub-Group | Record Count ($N$) | Mean LOC ($\pm \text{SD}$) | Mean Comment Density (%) | Mean Type Annotations | Mean Helper Methods |
 |---|---|---|---|---|---|
 | **Google Gemini 3.5 Flash** | $N=38$ | $55.39 \pm 23.81$ | **$21.31\% \pm 7.77\%$** | $10.97 \pm 8.21$ | $1.08 \pm 1.42$ |
 | **OpenAI GPT-5.6 Sol** | $N=19$ | $54.16 \pm 35.19$ | **$1.08\% \pm 2.18\%$** | $10.74 \pm 9.53$ | $1.26 \pm 1.85$ |
 | **Anthropic Claude Sonnet 4.6** | $N=19$ | $73.53 \pm 19.76$ | **$11.23\% \pm 10.61\%$** | $19.84 \pm 14.21$ | $1.58 \pm 2.14$ |
-| **Kruskal-Wallis $H$-test** | — | $H = 8.93, \mathbf{p = 0.0115}$ | $H = 43.50, \mathbf{p = 3.58 \times 10^{-10}}$ | $H = 4.98, p = 0.0829$ | $H = 0.92, p = 0.6316$ |
+| **Kruskal-Wallis $H$-test** | — | $H = 8.93, \mathbf{p_{\text{adj}} = 0.0345}$ | $H = 43.50, \mathbf{p_{\text{adj}} = 1.43 \times 10^{-9}}$ | $H = 4.98, p_{\text{adj}} = 0.1658$ | $H = 0.92, p_{\text{adj}} = 0.6316$ |
 
 ---
 
 ## 🔍 Empirical Frequency of 7 Structural Patterns
 
-| Pattern Identifier | Description | Frontier Models ($N=76$) | Full Synthetic Set ($N=126$) | Primary % ($k/76$) |
+| Pattern Identifier | Description | Frontier Models ($N=76$) | Full Synthetic Set ($N=126$)* | Primary % ($k/76$) |
 |---|---|---|---|---|
 | **Pattern 1** | **Structural Micro-Fragmentation**: Decomposing simple tasks into $\ge 2$ helper functions or extra class wrappers. | **68 / 76** | **69 / 126** | **89.5%** |
-| **Pattern 2** | **Contextual Invariant Omission**: Omitting domain safety checks (struct copy guards, `Object.create(null)` handling, `Object.is`). | **0 / 76\*** | **6 / 126** | **0.0%\*** |
+| **Pattern 2** | **Contextual Invariant Omission**: Omitting domain safety checks (struct copy guards, `Object.create(null)` handling, `Object.is`). | **0 / 76\*\*** | **6 / 126** | **0.0%\*\*** |
 | **Pattern 3** | **Trivial Syntax-Echo Comments**: Writing comments that directly repeat line syntax (e.g., `# Increment counter`). | **27 / 76** | **28 / 126** | **35.5%** |
 | **Pattern 4** | **Functional Iterator Closures in Hot Loops**: Using `.every()`, `.map()`, or `.forEach()` in performance hot loops. | **4 / 76** | **5 / 126** | **5.3%** |
 | **Pattern 5** | **In-Loop Mutating Array Shifts**: Regressing runtime complexity from $O(N)$ to $O(N^2)$ via vector removals in loops. | **0 / 76** | **0 / 126** | **0.0%** |
-| **Pattern 6** | **Asynchronous State & Timer Lifecycle Leaks**: Omitting `clearTimeout()` or mutating subscriber lists live.** | **0 / 76\*\*** | **0 / 126\*\*** | **0.0%\*\*** |
+| **Pattern 6** | **Asynchronous State & Timer Lifecycle Leaks**: Omitting `clearTimeout()` or mutating subscriber lists live.*** | **0 / 76\*\*\* ** | **0 / 126\*\*\* ** | **0.0%\*\*\* ** |
 | **Pattern 7** | **Compiler Vectorization Obstacles**: Using nested `std::min(std::max(...))` calls that hinder SIMD auto-vectorization. | **0 / 76** | **1 / 126** | **0.0%** |
 
-*\*Note on Pattern 2*: Contextual invariant omissions occurred specifically in the auxiliary Gemini benchmark recreation tasks (`flow_02` shallowEqual, `flow_03` Go Builder), scoring 6/50 (12.0%) in the auxiliary recreation dataset.  
-\*\**Note on Pattern 6*: Scored 0/126 in the quantitative dataset because Tier 2 async tasks (`task_12` Event Emitter and `task_14` TTL Cache) were skipped when OpenRouter API calls reached the hard payment budget limit.
+*\*Note on Full Synthetic Set*: Full Synthetic Set totals include the $N=50$ Gemini-only auxiliary pilot set; see Section 5.4 for its distinct pilot sampling protocol.  
+\*\**Note on Pattern 2*: Contextual invariant omissions occurred specifically in the auxiliary Gemini benchmark recreation tasks (`flow_02` shallowEqual, `flow_03` Go Builder), scoring 6/50 (12.0%) in the auxiliary recreation dataset.  
+\*\*\**Note on Pattern 6*: Scored 0/126 in the quantitative dataset because Tier 2 async tasks (`task_12` Event Emitter and `task_14` TTL Cache) were skipped when OpenRouter API calls reached the hard payment budget limit.
 
 ---
 
@@ -93,7 +91,8 @@ ai_code_stylometrics_study/
 │   └── compile_master_synthesis.py  # Stylometric metric extraction script
 ├── paper/
 │   ├── research_paper.md            # Markdown research paper by Hassan Elkady
-│   └── ai_vs_human_code_paper.pdf   # Publication-grade PDF paper (Chrome Headless A4)
+│   ├── ai_vs_human_code_paper.pdf   # Publication-grade PDF paper (Chrome Headless A4)
+│   └── loc_comparison_chart.png     # High-resolution Matplotlib LOC figure
 └── README.md                        # Repository documentation & citation guide
 ```
 

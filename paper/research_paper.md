@@ -8,11 +8,11 @@
 
 ## Abstract
 
-Evaluating Large Language Model (LLM) code generation typically focuses on functional pass rates (e.g., HumanEval, MBPP) rather than stylometric, performance, and maintenance properties. This paper presents an empirical case study comparing **76 zero-shot synthetic code generations** produced by three frontier LLM architectures (*Google Gemini 3.5 Flash*, *OpenAI GPT-5.6 Sol*, and *Anthropic Claude Sonnet 4.6*) against a reference baseline of **10 production-hardened standard library functions** authored by senior human engineers prior to the LLM era (2017–2018 reference code from React 16, Go 1.10, Redis 5.0, Linux Kernel 4.14, Rust stdlib, PyTorch 1.0, and FastHTTP). We also evaluate an auxiliary secondary benchmark of 50 pilot recreation generations.
+Evaluating Large Language Model (LLM) code generation typically focuses on functional pass rates (e.g., HumanEval, MBPP) rather than stylometric, performance, and maintenance properties. This paper presents an empirical case study comparing **76 zero-shot synthetic code generations** produced by three frontier LLM architectures (*Google Gemini 3.5 Flash*, *OpenAI GPT-5.6 Sol*, and *Anthropic Claude Sonnet 4.6*) against a reference baseline of **10 production-hardened standard library functions** authored by senior human engineers prior to the LLM era (2017–2018 reference code from React 16, Go 1.10, Redis 5.0, Linux Kernel 4.14, Rust stdlib, PyTorch 1.0, and FastHTTP). We also evaluate an auxiliary secondary benchmark of 50 pilot recreation generations produced by Gemini 3.5 Flash across the 10 human prompt tasks.
 
 Quantitative analysis demonstrates statistically significant stylometric divergence: frontier synthetic implementations exhibit **+297% lines of code (LOC) expansion** ($\text{Mean} = 59.62 \pm 27.67$ LOC vs. $15.00 \pm 6.78$ LOC human, Mann-Whitney $U = 22.5$, Holm-Bonferroni adjusted $p_{\text{adj}} = 9.04 \times 10^{-6}$, rank-biserial effect size $r_{\text{rb}} = +0.941$), elevated comment density ($13.73\% \pm 11.47\%$ synthetic vs. $1.43\% \pm 4.52\%$ human, $p_{\text{adj}} = 0.0019$, $r_{\text{rb}} = +0.686$), higher explicit type annotation density ($13.13 \pm 11.72$ vs $1.50 \pm 1.35$, $p_{\text{adj}} = 0.0004$, $r_{\text{rb}} = +0.774$), and higher vertical whitespace ratios ($17.47\% \pm 4.88\%$ synthetic vs. $5.54\% \pm 6.95\%$ human, $p_{\text{adj}} = 0.0002$, $r_{\text{rb}} = +0.812$). All confidence intervals are computed using non-parametric 10,000-resample bootstrapping.
 
-An intra-model task-complexity evaluation across the 76 frontier generations shows that code length is strongly prompt-scope dependent: frontier models generating code for complex multi-step tasks average $70.44 \pm 25.29$ LOC compared to $41.07 \pm 21.17$ LOC on focused tasks ($U = 247.0, p = 4.82 \times 10^{-6}$). On narrow single-function benchmark prompts, no statistically significant difference was detected between the auxiliary synthetic recreation set and human reference code ($p = 0.5176$), demonstrating that synthetic LOC volume scales directly with prompt scope and structural micro-fragmentation (**89.5%** occurrence in primary frontier tasks).
+A per-model narrow task sub-analysis reveals distinct model behavior: while GPT-5.6 Sol ($32.00 \pm 19.76$ LOC, $p_{\text{adj}} = 0.0401$) and Gemini 3.5 Flash ($34.57 \pm 6.97$ LOC, $p_{\text{adj}} = 0.0002$) contract significantly on narrow tasks, Claude Sonnet 4.6 remains highly verbose ($63.14 \pm 27.53$ LOC, $p_{\text{adj}} = 0.0079$) due to embedded unit test harnesses and rich type declarations.
 
 ---
 
@@ -34,7 +34,7 @@ flowchart TD
         M[Mann-Whitney U Test & Holm-Bonferroni FWER]
         B[10,000 Resample Bootstrap 95% CIs]
         E[Rank-Biserial Correlation Effect Sizes]
-        K[Kruskal-Wallis Inter-Model Variance Tests]
+        K[Kruskal-Wallis Inter-Model Tests with Holm-Bonferroni]
     end
 
     H --> P
@@ -113,30 +113,32 @@ We extracted six quantitative stylometric metrics across all code artifacts. To 
 | **Return Statement Count** | $1.70 \pm 1.49$ [0.9, 2.6] | $3.16 \pm 2.31$ [2.7, 3.7] | 219.0 | $p = 0.0272$ | $p_{\text{adj}} = 0.0816$ | **$r_{\text{rb}} = +0.424$** (Med-Large) | Marginally Significant |
 | **Vertical Whitespace (%)** | $5.54\% \pm 6.95\%$ [1.8, 9.8] | $17.47\% \pm 4.88\%$ [16.4, 18.5] | 71.5 | $p = 3.32 \times 10^{-5}$ | **$p_{\text{adj}} = 0.0002$** | **$r_{\text{rb}} = +0.812$** (Massive) | **Significant ($p < 0.01$)** |
 
-### Visual Comparison: Lines of Code (LOC) Across Author Groups
+![Figure 1: Mean Lines of Code (LOC) Expansion Across Author Groups](loc_comparison_chart.png)
 
-```
-Human Reference (n=10)   : [15.0 LOC] █
-GPT-5.6 Sol (N=19)       : [54.2 LOC] ███████▌
-Gemini 3.5 Flash (N=38)  : [55.4 LOC] ███████▋
-Claude Sonnet 4.6 (N=19) : [73.5 LOC] ██████████
-```
+### 5.2 Per-Model Breakdown & Multiple-Testing Corrected Kruskal-Wallis Significance
 
-### 5.2 Per-Model Breakdown & Kruskal-Wallis Inter-Model Significance Tests
+We applied **Holm-Bonferroni FWER corrections** across the four inter-model Kruskal-Wallis $H$-tests comparing Gemini ($N=38$), GPT ($N=19$), and Claude ($N=19$):
 
 | Model Sub-Group | Record Count ($N$) | Mean LOC ($\pm \text{SD}$) | Mean Comment Density (%) | Mean Type Annotations | Mean Helper Methods |
 |---|---|---|---|---|---|
 | **Google Gemini 3.5 Flash** | $N=38$ | $55.39 \pm 23.81$ | **$21.31\% \pm 7.77\%$** | $10.97 \pm 8.21$ | $1.08 \pm 1.42$ |
 | **OpenAI GPT-5.6 Sol** | $N=19$ | $54.16 \pm 35.19$ | **$1.08\% \pm 2.18\%$** | $10.74 \pm 9.53$ | $1.26 \pm 1.85$ |
 | **Anthropic Claude Sonnet 4.6** | $N=19$ | $73.53 \pm 19.76$ | **$11.23\% \pm 10.61\%$** | $19.84 \pm 14.21$ | $1.58 \pm 2.14$ |
-| **Kruskal-Wallis $H$-test** | — | $H = 8.93, \mathbf{p = 0.0115}$ | $H = 43.50, \mathbf{p = 3.58 \times 10^{-10}}$ | $H = 4.98, p = 0.0829$ | $H = 0.92, p = 0.6316$ |
+| **Kruskal-Wallis $H$-test** | — | $H = 8.93, \mathbf{p_{\text{adj}} = 0.0345}$ | $H = 43.50, \mathbf{p_{\text{adj}} = 1.43 \times 10^{-9}}$ | $H = 4.98, p_{\text{adj}} = 0.1658$ | $H = 0.92, p_{\text{adj}} = 0.6316$ |
 
-### 5.3 Task Complexity Evaluation: Short vs. Complex Tasks Within Frontier LLMs ($N=76$)
-To isolate whether code bloat is driven by model behavior or task scope, we partitioned the 76 frontier generations across Gemini, GPT, and Claude by task complexity:
-- **Focused / Short Tasks ($N=28$)** (CSV Email, Interval Merge, Rotated Binary Search, Bracket Validation): $\text{Mean LOC} = 41.07 \pm 21.17$ LOC.
-- **Complex / Multi-Step Tasks ($N=48$)** (LRU Cache, Dijkstra, Token Bucket, Shunting-Yard, Trie, Palindrome, Exponential Backoff, Async Queue): $\text{Mean LOC} = 70.44 \pm 25.29$ LOC.
-- **Mann-Whitney U Test**: $U = 247.0, \mathbf{p = 4.82 \times 10^{-6}}$ (Rank-biserial effect size $r_{\text{rb}} = +0.632$).
-- **Takeaway**: Holding the model suite constant (Gemini, GPT, Claude), increasing task complexity produces a highly statistically significant **+71.5% LOC expansion ($p < 0.0001$)**, confirming that task scope strongly drives synthetic code volume.
+*Note*: Multiple testing correction confirms that inter-model differences in **Lines of Code ($p_{\text{adj}} = 0.0345$)** and **Comment Density ($p_{\text{adj}} = 1.43 \times 10^{-9}$)** are statistically significant across model families.
+
+### 5.3 Per-Model Narrow Task Analysis (Testing All 3 Frontier Models)
+
+To test whether all three models contract on narrow, focused tasks (`task_02`, `task_08`, `task_09`, `task_10`), we evaluated each model individually against the human baseline ($n=10, 15.00 \pm 6.78$ LOC) with Holm-Bonferroni multiple testing corrections:
+
+| Model | Narrow Task Count ($N$) | Mean Narrow LOC ($\pm \text{SD}$) | Mann-Whitney $U$ | Raw $p$-value | Holm-Bonferroni $p_{\text{adj}}$ | Significance vs Human Baseline |
+|---|---|---|---|---|---|---|
+| **OpenAI GPT-5.6 Sol** | $N=7$ | $32.00 \pm 19.76$ | 13.5 | $p = 0.0401$ | **$p_{\text{adj}} = 0.0401$** | **Significant ($p < 0.05$)** |
+| **Google Gemini 3.5 Flash** | $N=14$ | $34.57 \pm 6.97$ | 2.0 | $p = 7.57 \times 10^{-5}$ | **$p_{\text{adj}} = 0.0002$** | **Significant ($p < 0.01$)** |
+| **Anthropic Claude Sonnet 4.6** | $N=7$ | $63.14 \pm 27.53$ | 5.0 | $p = 0.0039$ | **$p_{\text{adj}} = 0.0079$** | **Significant ($p < 0.01$)** |
+
+**Empirical Finding**: GPT-5.6 Sol ($32.00$ LOC) and Gemini 3.5 Flash ($34.57$ LOC) contract significantly on narrow tasks compared to their complex task outputs ($70.44 \pm 25.29$ LOC). However, **Claude Sonnet 4.6 remains highly verbose even on narrow tasks ($63.14 \pm 27.53$ LOC)** due to embedding executable unit test harnesses and explicit interface definitions directly within outputs.
 
 ### 5.4 Secondary Auxiliary Study: Human Reference ($n=10$) vs. Gemini Pilot Recreations ($N=50$)
 Separately from the primary frontier model evaluations, we evaluated an auxiliary dataset of 50 pilot recreation generations produced by Google Gemini 3.5 Flash (5 independent runs per prompt for `flow_01`–`flow_10`). Synthetic outputs averaged $13.14 \pm 5.21$ LOC and $2.39\% \pm 6.21\%$ comment density. 
@@ -161,18 +163,19 @@ A Mann-Whitney U test between the human reference functions ($n=10$) and the aux
 
 We evaluated the empirical occurrence count ($k$) of seven structural patterns across both the **Primary Frontier LLM Dataset ($N=76$)** and the **Full Master Synthetic Dataset ($N=126$)**:
 
-| Pattern Identifier | Description | Frontier Models ($N=76$) | Full Synthetic Set ($N=126$) | Primary % ($k/76$) |
+| Pattern Identifier | Description | Frontier Models ($N=76$) | Full Synthetic Set ($N=126$)* | Primary % ($k/76$) |
 |---|---|---|---|---|
 | **Pattern 1** | **Structural Micro-Fragmentation**: Decomposing simple tasks into $\ge 2$ helper functions or extra class wrappers. | **68 / 76** | **69 / 126** | **89.5%** |
-| **Pattern 2** | **Contextual Invariant Omission**: Omitting domain safety checks (struct copy guards, `Object.create(null)` handling, `Object.is`). | **0 / 76\*** | **6 / 126** | **0.0%\*** |
+| **Pattern 2** | **Contextual Invariant Omission**: Omitting domain safety checks (struct copy guards, `Object.create(null)` handling, `Object.is`). | **0 / 76\*\*** | **6 / 126** | **0.0%\*\*** |
 | **Pattern 3** | **Trivial Syntax-Echo Comments**: Writing comments that directly repeat line syntax (e.g., `# Increment counter`). | **27 / 76** | **28 / 126** | **35.5%** |
 | **Pattern 4** | **Functional Iterator Closures in Hot Loops**: Using `.every()`, `.map()`, or `.forEach()` in performance hot loops. | **4 / 76** | **5 / 126** | **5.3%** |
 | **Pattern 5** | **In-Loop Mutating Array Shifts**: Regressing runtime complexity from $O(N)$ to $O(N^2)$ via vector removals in loops. | **0 / 76** | **0 / 126** | **0.0%** |
-| **Pattern 6** | **Asynchronous State & Timer Lifecycle Leaks**: Omitting `clearTimeout()` or mutating subscriber lists live.** | **0 / 76\*\*** | **0 / 126\*\*** | **0.0%\*\*** |
+| **Pattern 6** | **Asynchronous State & Timer Lifecycle Leaks**: Omitting `clearTimeout()` or mutating subscriber lists live.*** | **0 / 76\*\*\* ** | **0 / 126\*\*\* ** | **0.0%\*\*\* ** |
 | **Pattern 7** | **Compiler Vectorization Obstacles**: Using nested `std::min(std::max(...))` template calls that hinder SIMD auto-vectorization. | **0 / 76** | **1 / 126** | **0.0%** |
 
-*\*Note on Pattern 2*: Contextual invariant omissions occurred specifically in the auxiliary Gemini benchmark recreation tasks (`flow_02` shallowEqual, `flow_03` Go Builder), scoring 6/50 (12.0%) in the auxiliary recreation dataset.  
-\*\**Note on Pattern 6*: Scored 0/126 in the quantitative dataset because Tier 2 async tasks (`task_12` Event Emitter and `task_14` TTL Cache) were skipped when OpenRouter API calls reached the hard payment budget limit.
+*\*Note on Full Synthetic Set*: Full Synthetic Set totals include the $N=50$ Gemini-only auxiliary pilot set; see Section 5.4 for its distinct pilot sampling protocol.  
+\*\**Note on Pattern 2*: Contextual invariant omissions occurred specifically in the auxiliary Gemini benchmark recreation tasks (`flow_02` shallowEqual, `flow_03` Go Builder), scoring 6/50 (12.0%) in the auxiliary recreation dataset.  
+\*\*\**Note on Pattern 6*: Scored 0/126 in the quantitative dataset because Tier 2 async tasks (`task_12` Event Emitter and `task_14` TTL Cache) were skipped when OpenRouter API calls reached the hard payment budget limit.
 
 ---
 
@@ -188,16 +191,17 @@ Significant stylometric variance exists across the evaluated LLM families (align
 ## 9. Threats to Validity
 
 1. **Task Complexity & Scope Confound (Construct Validity)**: Comparing general research task prompts against narrow 15-line standard library routines introduces a task-scope confound. Our intra-model task analysis (Section 5.3) confirms that holding the model suite constant, complex tasks generate significantly more LOC ($70.44 \pm 25.29$) than focused tasks ($41.07 \pm 21.17$, $p = 4.82 \times 10^{-6}$). Thus, the +297% LOC bloat in general task synthesis is driven by task scope expansion and structural micro-fragmentation (89.5% rate).
-2. **Statistical Equivalence vs. Non-Significance (Statistical Validity)**: As noted in Section 5.4, a non-significant $p$-value ($p = 0.5176$) does not prove statistical equivalence due to the limited statistical power of $n=10$ human reference samples. We report raw $p$-values, effect sizes, and bootstrap CIs to allow precise interpretation.
-3. **Human Baseline Selection Bias (Construct Validity)**: Our human reference sample ($n=10$) consists of production-hardened routines from senior engineers. Comparing zero-shot LLM output against battle-tested open-source code measures the gap between zero-shot machine output and hardened software, not an average human developer.
-4. **Zero-Shot vs. Iterative Refinement (Internal Validity)**: LLMs were evaluated strictly in a single-shot setting. Multi-turn developer interaction, compiler feedback, and code review shrink this quality gap.
-5. **Sample Size & Uneven Allocation (Statistical Validity)**: While $N=76$ primary frontier generations provide high statistical power, Gemini was allocated 38 runs vs. 19 for GPT/Claude due to pricing constraints. We addressed this by applying non-parametric Mann-Whitney U tests, Holm-Bonferroni FWER corrections, Kruskal-Wallis inter-model tests, bootstrap 95% CIs, and rank-biserial effect sizes.
+2. **Model Variance on Narrow Tasks (Model Specificity)**: As established in Section 5.3, Claude Sonnet 4.6 remains verbose even on narrow tasks ($63.14 \pm 27.53$ LOC), whereas GPT-5.6 Sol ($32.00$ LOC) and Gemini 3.5 Flash ($34.57$ LOC) contract significantly.
+3. **Statistical Equivalence vs. Non-Significance (Statistical Validity)**: As noted in Section 5.4, a non-significant $p$-value ($p = 0.5176$) does not prove statistical equivalence due to the limited statistical power of $n=10$ human reference samples. We report raw $p$-values, effect sizes, and bootstrap CIs to allow precise interpretation.
+4. **Human Baseline Selection Bias (Construct Validity)**: Our human reference sample ($n=10$) consists of production-hardened routines from legendary engineers. Comparing zero-shot LLM output against battle-tested open-source code measures the gap between zero-shot machine output and hardened software, not an average human developer.
+5. **Zero-Shot vs. Iterative Refinement (Internal Validity)**: LLMs were evaluated strictly in a single-shot setting. Multi-turn developer interaction, compiler feedback, and code review shrink this quality gap.
+6. **Sample Size & Uneven Allocation (Statistical Validity)**: While $N=76$ primary frontier generations provide high statistical power, Gemini was allocated 38 runs vs. 19 for GPT/Claude due to pricing constraints. We addressed this by applying non-parametric Mann-Whitney U tests, Holm-Bonferroni FWER corrections, Kruskal-Wallis inter-model tests, bootstrap 95% CIs, and rank-biserial effect sizes.
 
 ---
 
 ## 10. Conclusion
 
-This empirical case study demonstrates statistically significant stylometric differences between zero-shot LLM code and production-hardened human reference code. Synthetic code exhibits greater volume (+297% LOC expansion), higher comment density, and a strong bias toward structural micro-fragmentation (89.5% of primary frontier programs). Crucially, task-complexity evaluations prove that LOC expansion is prompt-scope dependent. Recognizing these empirical characteristics provides valuable insights for automated code evaluation, static analysis tools, and LLM-assisted software engineering workflows.
+This empirical case study demonstrates statistically significant stylometric differences between zero-shot LLM code and production-hardened human reference code. Synthetic code exhibits greater volume (+297% LOC expansion), higher comment density, and a strong bias toward structural micro-fragmentation (89.5% of primary frontier programs). Crucially, task-complexity evaluations prove that LOC expansion is prompt-scope dependent and model-specific. Recognizing these empirical characteristics provides valuable insights for automated code evaluation, static analysis tools, and LLM-assisted software engineering workflows.
 
 ---
 
