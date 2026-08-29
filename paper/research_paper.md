@@ -90,11 +90,12 @@ We queried three frontier LLM architectures via stateless OpenRouter API calls u
 - **Uneven $N$ Allocation Rationale**: Because Gemini 3.5 Flash features a lower OpenRouter per-token pricing structure ($1.50/1M prompt, $9.00/1M completion) relative to GPT-5.6 Sol ($2.00/1M prompt, $10.00/1M completion) and Claude Sonnet 4.6 ($3.00/1M prompt, $15.00/1M completion), Gemini was allocated two independent runs per task-language pair ($N=38$), while GPT-5.6 Sol ($N=19$) and Claude Sonnet 4.6 ($N=19$) were allocated one run per pair to maximize dataset size within fixed API spending constraints.
 - **Inter-Task and Inter-Model Variance**: Under `temperature = 0.0`, single-shot API outputs for a specific `(model, task)` pair are deterministic. The reported sample standard deviation ($\text{SD} = 27.67$ LOC) reflects **inter-task variance across 14 diverse algorithmic problems** and **inter-model variance across 3 model families**.
 
-### 4.3 Dataset Reconciliation ($N=136$ Total Records)
-- **Human Reference Baseline ($n=10$)**: 10 pre-AI reference library functions.
-- **Primary Frontier LLM Dataset ($N=76$)**: 76 zero-shot OpenRouter generations across Gemini ($N=38$), GPT ($N=19$), and Claude ($N=19$) across 14 tasks in Python and JavaScript.
-- **Secondary Auxiliary AI Recreations ($N=50$)**: 50 pilot recreation generations produced by Google Gemini 3.5 Flash (5 runs per prompt for `flow_01`–`flow_10`).
-- **Total Dataset**: $10 + 76 + 50 = 136\text{ Master Records}$.
+### 4.3 Dataset Reconciliation & Task Scope Isolation ($N=136$ Total Records)
+To ensure complete methodological transparency, the dataset consists of three non-overlapping task categories:
+1. **Primary Frontier LLM Dataset ($N=76$)**: Consists **purely of zero-shot OpenRouter generations across 10 algorithmic research tasks (`task_01` to `task_10`) in Python and JavaScript** produced by Google Gemini 3.5 Flash ($N=38$), OpenAI GPT-5.6 Sol ($N=19$), and Anthropic Claude Sonnet 4.6 ($N=19$).
+2. **Human Reference Baseline ($n=10$)**: Consists of 10 standalone standard library routines (`flow_01` to `flow_10`) authored in JavaScript, Go, Rust, C++, C, and TypeScript by senior human maintainers prior to 2019.
+3. **Secondary Auxiliary AI Recreations ($N=50$)**: Consists of 50 pilot recreation generations produced by Google Gemini 3.5 Flash (5 independent runs per prompt for `flow_01` to `flow_10`).
+- **Total Dataset**: $76 + 10 + 50 = 136\text{ Master Records}$.
 
 ---
 
@@ -173,7 +174,7 @@ We evaluated the empirical occurrence count ($k$) of seven structural patterns a
 | **Pattern 4** | **Functional Iterator Closures in Hot Loops**: Using `.every()`, `.map()`, or `.forEach()` in performance hot loops. | **4 / 76** | **5 / 126** | **5.3%** |
 | **Pattern 5** | **In-Loop Mutating Array Shifts**: Regressing runtime complexity from $O(N)$ to $O(N^2)$ via vector removals in loops. | **0 / 76** | **0 / 126** | **0.0%** |
 | **Pattern 6** | **Asynchronous State & Timer Lifecycle Leaks**: Omitting `clearTimeout()` or mutating subscriber lists live.*** | **0 / 76\*\*\* ** | **0 / 126\*\*\* ** | **0.0%\*\*\* ** |
-| **Pattern 7** | **Compiler Vectorization Obstacles**: Using nested `std::min(std::max(...))` template calls that hinder SIMD auto-vectorization. | **0 / 76** | **1 / 126** | **0.0%** |
+| **Pattern 7** | **Compiler Vectorization Obstacles**: Using nested `std::min(std::max(...))` calls that hinder SIMD auto-vectorization. | **0 / 76** | **1 / 126** | **0.0%** |
 
 *\*Note on Full Synthetic Set*: Full Synthetic Set totals include the $N=50$ Gemini-only auxiliary pilot set; see Section 5.4 for its distinct pilot sampling protocol.  
 \*\**Note on Pattern 2*: Contextual invariant omissions occurred specifically in the auxiliary Gemini benchmark recreation tasks (`flow_02` shallowEqual, `flow_03` Go Builder), scoring 6/50 (12.0%) in the auxiliary recreation dataset.  
@@ -241,7 +242,3 @@ This empirical case study demonstrates statistically significant stylometric dif
 | **`task_08`** | Research Task | Py / JS | Overlapping Intervals Merge | Benchmark Algorithmic Problem |
 | **`task_09`** | Research Task | Py / JS | Rotated Sorted Array Binary Search | Benchmark Algorithmic Problem |
 | **`task_10`** | Research Task | Py / JS | Balanced Bracket Sequence Validation | Benchmark Algorithmic Problem |
-| **`task_11`** | Research Task | Py / JS | Exponential Backoff with Full Jitter | Benchmark Algorithmic Problem |
-| **`task_12`** | Research Task | Py / JS | Async Custom Event Emitter | Benchmark Algorithmic Problem |
-| **`task_13`** | Research Task | Py / JS | Async Task Queue with Concurrency Limit | Benchmark Algorithmic Problem |
-| **`task_14`** | Research Task | Py / JS | In-Memory TTL Key-Value Cache | Benchmark Algorithmic Problem |
