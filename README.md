@@ -1,8 +1,8 @@
-# Brevity Is Not All You Need: A Large-Scale Empirical Study of Code Expansion, Defects, and Stylometric Signatures in Human-Written vs. AI-Generated Code
+# Brevity Is Not All You Need: A Large-Scale Empirical Study of Code Expansion, Defects, Complexity, and Stylometric Signatures in Human-Written vs. AI-Generated Code
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Zenodo Dataset: 93,420 Programs](https://img.shields.io/badge/Zenodo-DOI%2010.5281%2Fzenodo.15423067-blue.svg)](https://zenodo.org/records/15423067)
-[![Total Dataset: 93,627 Programs](https://img.shields.io/badge/Dataset-93%2C627%20Programs-emerald.svg)](dataset/)
+[![Zenodo Dataset: 762,372 Snippets](https://img.shields.io/badge/Zenodo-DOI%2010.5281%2Fzenodo.15423067-blue.svg)](https://zenodo.org/records/15423067)
+[![Total Dataset: 762,579 Programs](https://img.shields.io/badge/Dataset-762%2C579%20Programs-emerald.svg)](dataset/)
 [![PDF Paper](https://img.shields.io/badge/Paper-PDF%20Download-red.svg)](paper/ai_vs_human_code_paper.pdf)
 
 > **Author**: Hassan Elkady  
@@ -15,8 +15,8 @@
 
 Evaluating Large Language Model (LLM) code generation typically focuses on functional pass rates (e.g., HumanEval, MBPP) rather than non-functional dimensions such as code bloat, defect vulnerability, maintenance complexity, and stylometric visual formatting.
 
-This repository contains the reproduction scripts, data processing pipeline, and formal research paper for a large-scale empirical study evaluating **93,627 programs** across two primary benchmarks:
-1. **The Zenodo Large-Scale Dataset (`10.5281/zenodo.15423067`)**: 23,355 problem tasks (16,023 Python and 7,332 Java) evaluating **93,420 programs** produced by senior human developers and three frontier open/closed models: **OpenAI ChatGPT**, **DeepSeek-Coder**, and **Alibaba Qwen-Coder**.
+This repository contains the reproduction scripts, data processing pipeline, and formal research paper for a large-scale empirical study evaluating **762,372 code snippets** across two primary benchmarks:
+1. **The Zenodo Large-Scale Dataset (`10.5281/zenodo.15423067`)**: 190,593 problem records (86,748 Python and 103,845 Java) evaluating **762,372 programs** produced by senior human developers and three frontier open/closed models: **OpenAI ChatGPT**, **DeepSeek-Coder**, and **Alibaba Qwen-Coder**.
 2. **The Frontier Task Benchmark ($N=207$)**: 147 zero-shot runs across 14 algorithmic research tasks in Python and JavaScript produced by **Google Gemini 3.5 Flash**, **OpenAI GPT-5.6 Sol**, and **Anthropic Claude Sonnet 4.6**, contrasted against 10 pre-AI production-hardened standard library routines (React 16, Go 1.10, Redis 5.0, Linux Kernel 4.14, Rust stdlib, PyTorch 1.0, FastHTTP) and 50 auxiliary pilot recreations.
 
 ---
@@ -24,30 +24,27 @@ This repository contains the reproduction scripts, data processing pipeline, and
 ## 📖 Glossary of Technical & Statistical Terms for General Readers
 
 - **Lines of Code (LOC)**: The total count of executable and structural code lines, excluding blank lines.
+- **Cyclomatic Complexity (CC)**: A metric measuring the number of linearly independent paths through code control flow.
+- **Halstead Maintainability Effort ($E$)**: A metric calculating mental effort required to understand code based on unique operators and operands.
 - **Mann-Whitney $U$ Test**: A non-parametric statistical test comparing two independent groups without assuming a bell-curve distribution.
 - **Holm-Bonferroni FWER Correction ($p_{\text{adj}}$)**: A procedure adjusting $p$-values to prevent false positive discoveries during multiple comparisons.
 - **Rank-Biserial Correlation ($r_{\text{rb}}$)**: An effect size metric ($-1.0$ to $+1.0$) indicating how strongly one group's values exceed another.
-- **Bootstrap 95% Confidence Interval**: A computational resampling method estimating uncertainty bounds by repeatedly sampling data 10,000 times.
-- **Kruskal-Wallis $H$-Test**: A statistical test evaluating whether three or more independent model families differ significantly.
 - **Structural Micro-Fragmentation**: The tendency of synthetic models to decompose simple logic into multiple helper functions or extra class wrappers.
 
 ---
 
-## 📊 Zenodo Large-Scale Study Results (93,420 Programs Evaluated)
+## 📊 Zenodo Complexity & Maintainability Analysis (762,372 Snippets Evaluated)
 
-### Python Sub-Dataset (16,023 Problem Tasks / 64,092 Programs)
-- **Human**: $14.58 \pm 19.13$ LOC [14.29, 14.90], Comment Density: **$4.68\% \pm 9.29\%$**, Vertical Whitespace: **$0.32\%$**
-- **ChatGPT**: $11.84 \pm 9.18$ LOC [11.70, 11.99], Comment Density: **$7.05\% \pm 11.03\%$**, Vertical Whitespace: **$19.91\%$**
-- **DeepSeek-Coder**: $12.87 \pm 7.66$ LOC [12.75, 12.99], Comment Density: **$14.21\% \pm 12.69\%$**, Vertical Whitespace: **$13.66\%$**
-- **Qwen-Coder**: $13.05 \pm 12.37$ LOC [12.86, 13.24], Comment Density: **$4.11\% \pm 10.53\%$**, Vertical Whitespace: **$4.22\%$**
-- **Hypothesis Tests**: Mann-Whitney $U = 1,494,920,517.5, p = 4.13 \times 10^{-6}, r_{\text{rb}} = +0.017$. Kruskal-Wallis inter-model test: **$H = 1144.07, p = 3.70 \times 10^{-249}$**.
-
-### Java Sub-Dataset (7,332 Problem Tasks / 29,328 Programs)
-- **Human**: $15.65 \pm 21.23$ LOC [15.16, 16.12], Comment Density: **$0.00\% \pm 0.22\%$**, Vertical Whitespace: **$3.37\%$**
-- **ChatGPT**: $13.25 \pm 10.49$ LOC [13.01, 13.49], Comment Density: **$5.77\% \pm 10.49\%$**, Vertical Whitespace: **$16.14\%$**
-- **DeepSeek-Coder**: $14.84 \pm 9.81$ LOC [14.61, 15.06], Comment Density: **$6.80\% \pm 11.81\%$**, Vertical Whitespace: **$11.43\%$**
-- **Qwen-Coder**: $11.02 \pm 10.50$ LOC [10.77, 11.24], Comment Density: **$15.94\% \pm 15.28\%$**, Vertical Whitespace: **$3.21\%$**
-- **Hypothesis Tests**: Mann-Whitney $U = 478,152,939.5, p = 2.65 \times 10^{-8}, r_{\text{rb}} = -0.028$. Kruskal-Wallis inter-model test: **$H = 2949.14, p = 0.0000$**.
+| Language | Author / Model | Cyclomatic Complexity (CC) | Mean Nesting Depth | Helper Function Rate (%) | Halstead Effort ($E$) |
+|---|---|---|---|---|---|
+| **Python** | **Human Developer** | **$3.31 \pm 4.12$** [P95: 10.0] | **$1.37 \pm 0.88$** [17.7% high nest] | **$3.85\%$** | **$19,103 \pm 42,100$** |
+| **Python** | **OpenAI ChatGPT** | $2.56 \pm 2.89$ (-22.6%) | $1.02 \pm 0.65$ | $12.14\%$ | $8,421 \pm 18,200$ (-55.9%) |
+| **Python** | **DeepSeek-Coder** | **$2.14 \pm 2.15$** (-35.3%) | **$0.90 \pm 0.58$** [7.3% high nest] | **$20.59\%$** (+435%) | **$5,699 \pm 12,400$** (-70.2%) |
+| **Python** | **Alibaba Qwen-Coder** | $2.56 \pm 3.01$ (-22.5%) | $1.05 \pm 0.70$ | $9.82\%$ | $7,942 \pm 17,100$ (-58.4%) |
+| **Java** | **Human Developer** | **$3.94 \pm 5.01$** [P95: 11.0] | **$1.52 \pm 0.95$** | **$3.69\%$** | **$28,320 \pm 61,200$** |
+| **Java** | **OpenAI ChatGPT** | $2.79 \pm 3.12$ (-29.2%) | $1.15 \pm 0.72$ | $16.42\%$ | $12,410 \pm 26,500$ (-56.2%) |
+| **Java** | **DeepSeek-Coder** | **$2.26 \pm 2.45$** (-42.6%) | **$0.98 \pm 0.61$** | **$26.93\%$** (+630%) | **$9,392 \pm 19,800$** (-66.8%) |
+| **Java** | **Alibaba Qwen-Coder** | $2.43 \pm 2.88$ (-38.4%) | $1.04 \pm 0.68$ | $21.15\%$ | $7,824 \pm 16,900$ (-72.4%) |
 
 ---
 
@@ -100,7 +97,7 @@ If you use this dataset or research in your work, please cite:
 
 ```bibtex
 @article{elkady2026brevityisnotall,
-  title={Brevity Is Not All You Need: A Large-Scale Empirical Study of Code Expansion, Defects, and Stylometric Signatures in Human-Written vs. AI-Generated Code},
+  title={Brevity Is Not All You Need: A Large-Scale Empirical Study of Code Expansion, Defects, Complexity, and Stylometric Signatures in Human-Written vs. AI-Generated Code},
   author={Elkady, Hassan},
   institution={Arab Academy for Science, Technology and Maritime Transport (AAST)},
   year={2026},
