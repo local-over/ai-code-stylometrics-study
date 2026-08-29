@@ -1,0 +1,366 @@
+{
+  "python": {
+    "record_count": 30000,
+    "snippet_count": 120000,
+    "groups": {
+      "human": {
+        "loc": {
+          "mean": 14.47,
+          "std": 18.33,
+          "median": 9.0,
+          "p25": 6.0,
+          "p75": 17.0
+        },
+        "comment_density": {
+          "mean": 4.69,
+          "std": 9.35,
+          "median": 0.0,
+          "p25": 0.0,
+          "p75": 5.88
+        },
+        "whitespace_pct": {
+          "mean": 0.32,
+          "std": 2.28,
+          "median": 0.0,
+          "p25": 0.0,
+          "p75": 0.0
+        },
+        "mean_line_len": {
+          "mean": 42.83,
+          "std": 11.7,
+          "median": 41.52,
+          "p25": 35.44,
+          "p75": 48.29
+        },
+        "docstring_present": {
+          "mean": 0.03,
+          "std": 0.17,
+          "median": 0.0,
+          "p25": 0.0,
+          "p75": 0.0
+        },
+        "todo_count": {
+          "mean": 0.02,
+          "std": 0.15,
+          "median": 0.0,
+          "p25": 0.0,
+          "p75": 0.0
+        }
+      },
+      "chatgpt": {
+        "loc": {
+          "mean": 9.64,
+          "std": 7.8,
+          "median": 8.0,
+          "p25": 5.0,
+          "p75": 12.0
+        },
+        "comment_density": {
+          "mean": 8.68,
+          "std": 13.65,
+          "median": 0.0,
+          "p25": 0.0,
+          "p75": 16.67
+        },
+        "whitespace_pct": {
+          "mean": 19.97,
+          "std": 9.6,
+          "median": 20.0,
+          "p25": 12.5,
+          "p75": 25.81
+        },
+        "mean_line_len": {
+          "mean": 37.81,
+          "std": 12.17,
+          "median": 36.31,
+          "p25": 30.67,
+          "p75": 43.0
+        },
+        "docstring_present": {
+          "mean": 0.19,
+          "std": 0.39,
+          "median": 0.0,
+          "p25": 0.0,
+          "p75": 0.0
+        },
+        "todo_count": {
+          "mean": 0.0,
+          "std": 0.06,
+          "median": 0.0,
+          "p25": 0.0,
+          "p75": 0.0
+        }
+      },
+      "dsc": {
+        "loc": {
+          "mean": 11.45,
+          "std": 5.45,
+          "median": 11.0,
+          "p25": 7.0,
+          "p75": 15.0
+        },
+        "comment_density": {
+          "mean": 17.95,
+          "std": 14.48,
+          "median": 16.67,
+          "p25": 5.56,
+          "p75": 28.57
+        },
+        "whitespace_pct": {
+          "mean": 14.71,
+          "std": 9.15,
+          "median": 15.79,
+          "p25": 9.09,
+          "p75": 21.74
+        },
+        "mean_line_len": {
+          "mean": 37.03,
+          "std": 8.41,
+          "median": 36.08,
+          "p25": 31.38,
+          "p75": 41.58
+        },
+        "docstring_present": {
+          "mean": 0.55,
+          "std": 0.5,
+          "median": 1.0,
+          "p25": 0.0,
+          "p75": 1.0
+        },
+        "todo_count": {
+          "mean": 0.0,
+          "std": 0.04,
+          "median": 0.0,
+          "p25": 0.0,
+          "p75": 0.0
+        }
+      },
+      "qwen": {
+        "loc": {
+          "mean": 12.02,
+          "std": 10.54,
+          "median": 9.0,
+          "p25": 5.0,
+          "p75": 16.0
+        },
+        "comment_density": {
+          "mean": 4.63,
+          "std": 10.99,
+          "median": 0.0,
+          "p25": 0.0,
+          "p75": 5.56
+        },
+        "whitespace_pct": {
+          "mean": 4.27,
+          "std": 7.36,
+          "median": 0.0,
+          "p25": 0.0,
+          "p75": 7.69
+        },
+        "mean_line_len": {
+          "mean": 39.75,
+          "std": 20.14,
+          "median": 37.12,
+          "p25": 31.33,
+          "p75": 44.0
+        },
+        "docstring_present": {
+          "mean": 0.26,
+          "std": 0.44,
+          "median": 0.0,
+          "p25": 0.0,
+          "p75": 1.0
+        },
+        "todo_count": {
+          "mean": 0.0,
+          "std": 0.03,
+          "median": 0.0,
+          "p25": 0.0,
+          "p75": 0.0
+        }
+      }
+    }
+  },
+  "java": {
+    "record_count": 30000,
+    "snippet_count": 120000,
+    "groups": {
+      "human": {
+        "loc": {
+          "mean": 14.69,
+          "std": 19.18,
+          "median": 10.0,
+          "p25": 6.0,
+          "p75": 17.0
+        },
+        "comment_density": {
+          "mean": 0.0,
+          "std": 0.17,
+          "median": 0.0,
+          "p25": 0.0,
+          "p75": 0.0
+        },
+        "whitespace_pct": {
+          "mean": 3.43,
+          "std": 7.56,
+          "median": 0.0,
+          "p25": 0.0,
+          "p75": 0.0
+        },
+        "mean_line_len": {
+          "mean": 40.41,
+          "std": 12.23,
+          "median": 38.71,
+          "p25": 31.93,
+          "p75": 46.75
+        },
+        "docstring_present": {
+          "mean": 0.0,
+          "std": 0.03,
+          "median": 0.0,
+          "p25": 0.0,
+          "p75": 0.0
+        },
+        "todo_count": {
+          "mean": 0.0,
+          "std": 0.05,
+          "median": 0.0,
+          "p25": 0.0,
+          "p75": 0.0
+        }
+      },
+      "chatgpt": {
+        "loc": {
+          "mean": 11.49,
+          "std": 10.77,
+          "median": 9.0,
+          "p25": 6.0,
+          "p75": 14.0
+        },
+        "comment_density": {
+          "mean": 6.98,
+          "std": 12.57,
+          "median": 0.0,
+          "p25": 0.0,
+          "p75": 11.11
+        },
+        "whitespace_pct": {
+          "mean": 16.08,
+          "std": 7.38,
+          "median": 15.38,
+          "p25": 10.0,
+          "p75": 21.43
+        },
+        "mean_line_len": {
+          "mean": 37.75,
+          "std": 10.56,
+          "median": 36.44,
+          "p25": 30.5,
+          "p75": 43.38
+        },
+        "docstring_present": {
+          "mean": 0.01,
+          "std": 0.11,
+          "median": 0.0,
+          "p25": 0.0,
+          "p75": 0.0
+        },
+        "todo_count": {
+          "mean": 0.01,
+          "std": 0.09,
+          "median": 0.0,
+          "p25": 0.0,
+          "p75": 0.0
+        }
+      },
+      "dsc": {
+        "loc": {
+          "mean": 13.86,
+          "std": 7.24,
+          "median": 13.0,
+          "p25": 8.0,
+          "p75": 18.0
+        },
+        "comment_density": {
+          "mean": 8.53,
+          "std": 13.33,
+          "median": 0.0,
+          "p25": 0.0,
+          "p75": 14.29
+        },
+        "whitespace_pct": {
+          "mean": 12.56,
+          "std": 8.24,
+          "median": 14.29,
+          "p25": 6.67,
+          "p75": 19.05
+        },
+        "mean_line_len": {
+          "mean": 35.51,
+          "std": 9.14,
+          "median": 34.44,
+          "p25": 29.4,
+          "p75": 40.31
+        },
+        "docstring_present": {
+          "mean": 0.02,
+          "std": 0.13,
+          "median": 0.0,
+          "p25": 0.0,
+          "p75": 0.0
+        },
+        "todo_count": {
+          "mean": 0.0,
+          "std": 0.05,
+          "median": 0.0,
+          "p25": 0.0,
+          "p75": 0.0
+        }
+      },
+      "qwen": {
+        "loc": {
+          "mean": 10.54,
+          "std": 9.34,
+          "median": 7.0,
+          "p25": 3.0,
+          "p75": 14.0
+        },
+        "comment_density": {
+          "mean": 17.14,
+          "std": 15.73,
+          "median": 18.18,
+          "p25": 0.0,
+          "p75": 33.33
+        },
+        "whitespace_pct": {
+          "mean": 3.26,
+          "std": 6.23,
+          "median": 0.0,
+          "p25": 0.0,
+          "p75": 3.45
+        },
+        "mean_line_len": {
+          "mean": 37.16,
+          "std": 13.41,
+          "median": 35.33,
+          "p25": 28.33,
+          "p75": 43.31
+        },
+        "docstring_present": {
+          "mean": 0.0,
+          "std": 0.04,
+          "median": 0.0,
+          "p25": 0.0,
+          "p75": 0.0
+        },
+        "todo_count": {
+          "mean": 0.0,
+          "std": 0.05,
+          "median": 0.0,
+          "p25": 0.0,
+          "p75": 0.0
+        }
+      }
+    }
+  }
+}
