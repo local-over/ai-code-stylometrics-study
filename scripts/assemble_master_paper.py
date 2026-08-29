@@ -2,9 +2,10 @@ import os
 import subprocess
 
 SECTIONS_DIR = "/home/hassan/Desktop/ai_code_stylometrics_study/paper/sections"
-PAPER_MD_PATH = "/home/hassan/Desktop/ai_code_stylometrics_study/paper/research_paper.md"
+PAPER_DIR = "/home/hassan/Desktop/ai_code_stylometrics_study/paper"
+PAPER_MD_PATH = os.path.join(PAPER_DIR, "research_paper.md")
 PAPER_HTML_PATH = "/home/hassan/Desktop/assembled_paper_render.html"
-PAPER_PDF_PATH = "/home/hassan/Desktop/ai_code_stylometrics_study/paper/research_paper.pdf"
+PAPER_PDF_PATH = os.path.join(PAPER_DIR, "research_paper.pdf")
 
 SECTION_FILES = [
     "01_title_abstract.md",
@@ -37,108 +38,124 @@ def main():
         f.write(master_md)
     print(f"Master anti-slop research paper written to {PAPER_MD_PATH} ({len(master_md):,} chars)")
 
-    # Build HTML for PDF conversion
-    html_content = """<!DOCTYPE html>
+    fig1_path = os.path.join(PAPER_DIR, "fig1_vertical_airiness.png")
+    fig2_path = os.path.join(PAPER_DIR, "fig2_complexity_nesting.png")
+    fig3_path = os.path.join(PAPER_DIR, "fig3_naming_stylometrics.png")
+    fig4_path = os.path.join(PAPER_DIR, "fig4_security_flaws.png")
+
+    # Build HTML for PDF conversion with embedded 300 DPI figures
+    html_content = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Master Research Paper - Hassan Elkady</title>
   <style>
-    @page {
+    @page {{
       size: A4;
       margin: 16mm 14mm 16mm 14mm;
-      @bottom-right {
+      @bottom-right {{
         content: counter(page);
         font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
         font-size: 8pt;
         color: #71717a;
-      }
-    }
+      }}
+    }}
 
-    * { box-sizing: border-box; }
+    * {{ box-sizing: border-box; }}
     
-    body {
+    body {{
       font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
       color: #18181b;
       line-height: 1.45;
       font-size: 8pt;
       background: #ffffff;
-    }
+    }}
 
-    .header-container {
+    .header-container {{
       border-bottom: 2px solid #18181b;
       padding-bottom: 8px;
       margin-bottom: 12px;
-    }
+    }}
 
-    .doc-category {
+    .doc-category {{
       font-size: 7.5pt;
       font-weight: 700;
       letter-spacing: 0.12em;
       text-transform: uppercase;
       color: #2563eb;
       margin-bottom: 4px;
-    }
+    }}
 
-    h1.doc-title {
+    h1.doc-title {{
       font-size: 12pt;
       font-weight: 800;
       line-height: 1.2;
       color: #09090b;
       margin: 0 0 6px 0;
       letter-spacing: -0.02em;
-    }
+    }}
 
-    .author-bar {
+    .author-bar {{
       font-size: 8pt;
       color: #3f3f46;
       margin-bottom: 4px;
-    }
+    }}
 
-    .meta-bar {
+    .meta-bar {{
       font-size: 7pt;
       color: #71717a;
       border-top: 1px solid #e4e4e7;
       padding-top: 4px;
       margin-top: 5px;
-    }
+    }}
 
-    h2 {
+    h2 {{
       font-size: 9.5pt;
       font-weight: 700;
       color: #09090b;
       border-bottom: 1px solid #e4e4e7;
       padding-bottom: 3px;
-      margin-top: 10px;
+      margin-top: 12px;
       margin-bottom: 4px;
       page-break-after: avoid;
-    }
+    }}
 
-    h3 {
+    h3 {{
       font-size: 8.5pt;
       font-weight: 700;
       color: #1c1917;
-      margin-top: 8px;
+      margin-top: 10px;
       margin-bottom: 3px;
       page-break-after: avoid;
-    }
+    }}
 
-    h4 {
-      font-size: 7.5pt;
-      font-weight: 700;
-      color: #2563eb;
-      margin-top: 6px;
-      margin-bottom: 2px;
-      page-break-after: avoid;
-    }
-
-    p {
+    p {{
       margin-top: 0;
       margin-bottom: 4px;
       text-align: justify;
-    }
+    }}
 
-    pre {
+    .figure-box {{
+      text-align: center;
+      margin: 10px 0;
+      page-break-inside: avoid;
+    }}
+
+    .figure-box img {{
+      max-width: 95%;
+      height: auto;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+    }}
+
+    .figure-caption {{
+      font-size: 7pt;
+      font-style: italic;
+      color: #475569;
+      margin-top: 3px;
+    }}
+
+    pre {{
       background: #f8fafc;
       border: 1px solid #cbd5e1;
       border-radius: 4px;
@@ -149,48 +166,48 @@ def main():
       white-space: pre-wrap;
       word-break: break-all;
       margin: 4px 0 6px 0;
-    }
+    }}
 
-    code {
+    code {{
       font-family: 'Courier New', Courier, monospace;
       font-size: 7.5pt;
       background: #f1f5f9;
       padding: 1px 3px;
       border-radius: 2px;
-    }
+    }}
 
-    table {
+    table {{
       width: 100%;
       border-collapse: collapse;
       margin: 6px 0;
       font-size: 6.5pt;
       page-break-inside: avoid;
-    }
+    }}
 
-    th {
+    th {{
       background: #f4f4f5;
       color: #18181b;
       font-weight: 700;
       text-align: left;
       padding: 3.5px 5px;
       border: 1px solid #d4d4d8;
-    }
+    }}
 
-    td {
+    td {{
       padding: 3px 5px;
       border: 1px solid #e4e4e7;
       vertical-align: top;
-    }
+    }}
 
-    tr:nth-child(even) td {
+    tr:nth-child(even) td {{
       background: #fafafa;
-    }
+    }}
   </style>
 </head>
 <body>
 
   <div class="header-container">
-    <div class="doc-category">Academic Research Study • Section-by-Section Assembly</div>
+    <div class="doc-category">Academic Research Study • Multi-Graph Empirical Analysis</div>
     <h1 class="doc-title">Multi-Tier Empirical Analysis of Structural Formatting, Control Complexity, Naming Stylometrics, and Security Vulnerabilities in Human vs. AI Code Synthesis</h1>
     <div class="author-bar"><strong>Hassan Elkady</strong> — Computer Engineering Student, Arab Academy for Science, Technology and Maritime Transport (AAST)</div>
     <div class="meta-bar">August 2026 | Zenodo Dataset (DOI: 10.5281/zenodo.15423067): 507,045 Tasks / 2,028,180 Programs Evaluated</div>
@@ -290,6 +307,26 @@ def main():
     </tbody>
   </table>
 
+  <div class="figure-box">
+    <img src="file://{fig1_path}" alt="Figure 1: Vertical Whitespace Airiness">
+    <div class="figure-caption">Figure 1: Vertical Whitespace Airiness ("LLM Airiness") across Human developers and AI models.</div>
+  </div>
+
+  <div class="figure-box">
+    <img src="file://{fig2_path}" alt="Figure 2: Complexity and Nesting Depth Trimming">
+    <div class="figure-caption">Figure 2: Cyclomatic Complexity and Max Nesting Depth Trimming across models.</div>
+  </div>
+
+  <div class="figure-box">
+    <img src="file://{fig3_path}" alt="Figure 3: Single-Letter Variable Suppression">
+    <div class="figure-caption">Figure 3: Single-letter variable suppression vs. artificial PEP-8 casing purity.</div>
+  </div>
+
+  <div class="figure-box">
+    <img src="file://{fig4_path}" alt="Figure 4: Security Vulnerabilities">
+    <div class="figure-caption">Figure 4: Command injection flaw (shell=True) and hardcoded secret exposure rates.</div>
+  </div>
+
   <h2>3. Side-by-Side Code Quadruplet Breakdown</h2>
   <pre><code># Senior Human Developer (Dense, Minimal Comments, Tuple Unpacking)
 def swap_and_reverse(arr):
@@ -323,7 +360,7 @@ def swap_and_reverse(arr):
     with open(PAPER_HTML_PATH, "w", encoding="utf-8") as f:
         f.write(html_content)
 
-    print("Converting Assembled HTML to PDF via Google Chrome...")
+    print("Converting Assembled HTML with 4 embedded graphs to PDF via Google Chrome...")
     cmd = [
         "google-chrome-stable",
         "--headless",
@@ -334,7 +371,7 @@ def swap_and_reverse(arr):
     ]
     subprocess.run(cmd, check=True)
     if os.path.exists(PAPER_PDF_PATH):
-        print(f"Successfully generated Assembled PDF: {PAPER_PDF_PATH} ({os.path.getsize(PAPER_PDF_PATH):,} bytes)")
+        print(f"Successfully generated Multi-Graph PDF: {PAPER_PDF_PATH} ({os.path.getsize(PAPER_PDF_PATH):,} bytes)")
 
 if __name__ == "__main__":
     main()
