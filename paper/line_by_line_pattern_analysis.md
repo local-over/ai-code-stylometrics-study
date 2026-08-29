@@ -1,27 +1,3 @@
-# Deep Line-by-Line Comparative Analysis & Pattern Recognition in Human vs. AI Code Synthesis: A Large-Scale Empirical Study of 480,000 Code Snippets
-
-**Author**: Hassan Elkady  
-**Affiliation**: Computer Engineering Student, Arab Academy for Science, Technology and Maritime Transport (AAST)  
-**Date**: August 2026  
-
----
-
-## Abstract
-
-Evaluating Large Language Model (LLM) code generation requires moving beyond high-level statistical metrics to perform an active, line-by-line comparative analysis of synthesized source code. This paper presents an exhaustive qualitative and quantitative line-by-line investigation analyzing **480,000 code snippets** across **120,000 problem tasks** (60,000 Python and 60,000 Java tasks) from the Zenodo Large-Scale Dataset (`10.5281/zenodo.15423067`). By inspecting parallel implementations authored by senior human engineers and three frontier model families (*OpenAI ChatGPT*, *DeepSeek-Coder*, *Alibaba Qwen-Coder*), we document universal AI coding fingerprints, structural divergence patterns, and exact side-by-side code comparative breakdowns.
-
-Our line-by-line empirical findings reveal:
-1. **Universal AI Fingerprints**:
-   - **Procedural Comment Headers**: ChatGPT and Qwen-Coder insert numbered step headers (`# Step 1: ...`, `# Step 2: ...`) in procedural routines, a habit virtually absent in production human code.
-   - **Vertical Airiness**: ChatGPT and DeepSeek-Coder pad every control statement with empty blank lines, spending **16% - 20% of lines on vertical whitespace** (vs. **0.32% - 3.4%** for Humans).
-   - **Imperative Staging vs Pythonic Unpacking**: Human Python engineers use tuple unpacking (`a, b = b, a`) **4.7x to 14.0x more frequently** than LLMs, which favor multi-line temporary variable staging (`temp = a`).
-2. **Model-Specific Stylometric Signatures**:
-   - **DeepSeek-Coder**: Hyper-docstringed author profile incorporating formal docstrings in **55.0% of Python functions** ($r_{	ext{rb}} = -0.685, p_{	ext{adj}} < 10^{-300}$).
-   - **ChatGPT**: Hyper-enforces PEP-8 `snake_case` naming (**91.05% purity**) while exhibiting a **2.58x higher rate of command injection flaws** (`shell=True`).
-   - **Qwen-Coder**: Emits dense single-line Java comments (**17.17% comment density**) while displaying a high placeholder stub retention rate (**25.84%** `pass`/`TODO` stubs).
-
----
-
 # Line-by-Line Active Code Comparison & Deep Pattern Recognition
 **Dataset Source**: Zenodo Large-Scale Dataset (`10.5281/zenodo.15423067`)
 **Author**: Hassan Elkady | AAST Computer Engineering
@@ -232,11 +208,3 @@ private OptionKindAndValue readKindAndValue() {
 | **Variable Naming** | Concise, uses single-letters `i,j,k` in 30% of code | Verbose descriptive names, PEP-8 hyper-pure | Moderately descriptive names | Concise names, PEP-8 compliant |
 | **Control Flow** | Complex nested `if/else` (CC = 3.9 - 4.1) | Flatter guard clauses (CC = 2.5 - 2.7) | Very flat execution flow (CC = 2.1 - 2.5) | Flatter execution flow (CC = 2.1 - 3.2) |
 | **Security Risk** | Low command injection flaw rate (0.12%) | Higher command injection rate (0.96%, `shell=True`) | Higher hardcoded secrets rate (0.46% in Java) | High stub retention (25.8% `pass`/`TODO`) |
-
----
-
-## References
-
-1. Zenodo Dataset (2025). *Human-Written vs. AI-Generated Code: A Large-Scale Study of Defects, Vulnerabilities, and Complexity*. DOI: 10.5281/zenodo.15423067.
-2. Binkley, D., et al. (2023). *Understanding the Readability of AI-Generated Code*. IEEE TSE.
-3. Jesse, K., et al. (2023). *Large Language Models and Code Concise Synthesis*. ACM ISSTA.
