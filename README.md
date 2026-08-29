@@ -33,13 +33,13 @@ Evaluated via Mann-Whitney U test with Holm-Bonferroni FWER correction, non-para
 
 ---
 
-## 🔬 Paired Task-for-Task Sub-Analysis: Matched Prompts (`flow_01`–`flow_10`)
+## 🔬 Task Complexity Evaluation: Short vs. Complex Tasks Within Frontier LLMs ($N=76$)
 
-To isolate the task-scope confound raised by task complexity differences, we performed a direct paired sub-analysis comparing human reference functions ($n=10$) against AI recreations solving the **exact same 10 prompt tasks ($N=50$)**:
-- **Human Reference ($n=10$)**: $\text{LOC} = 15.00 \pm 6.78$ LOC, $\text{Comment Density} = 1.43\% \pm 4.52\%$.
-- **AI Matched Recreations ($N=50$)**: $\text{LOC} = 13.14 \pm 5.26$ LOC, $\text{Comment Density} = 2.39\% \pm 6.27\%$.
-- **Mann-Whitney U Test**: $\text{LOC } U = 283.0, \mathbf{p = 0.5176}$; $\text{Comment Density } U = 239.5, \mathbf{p = 0.7371}$.
-- **Empirical Takeaway**: When LLMs solve narrow, single-function reference prompts (`flow_01`–`flow_10`), their LOC outputs are **statistically indistinguishable from human reference implementations ($p = 0.5176$)**. This proves conclusively that the **+297% LOC bloat** observed in the primary Frontier dataset ($N=76$) is driven by task scope expansion on broader multi-step research prompts (`task_01`–`task_10`) where LLMs introduce structural micro-helper fragmentation (**89.5%** occurrence).
+To isolate whether code bloat is driven by model behavior or task scope, we partitioned the 76 frontier generations across Gemini, GPT, and Claude by task complexity:
+- **Focused / Short Tasks ($N=28$)** (CSV Email, Interval Merge, Rotated Binary Search, Bracket Validation): $\text{Mean LOC} = 41.07 \pm 21.17$ LOC.
+- **Complex / Multi-Step Tasks ($N=48$)** (LRU Cache, Dijkstra, Token Bucket, Shunting-Yard, Trie, Palindrome, Exponential Backoff, Async Queue): $\text{Mean LOC} = 70.44 \pm 25.29$ LOC.
+- **Mann-Whitney U Test**: $U = 247.0, \mathbf{p = 4.82 \times 10^{-6}}$ (Rank-biserial effect size $r_{\text{rb}} = +0.632$).
+- **Takeaway**: Holding the model suite constant (Gemini, GPT, Claude), increasing task complexity produces a highly statistically significant **+71.5% LOC expansion ($p < 0.0001$)**, confirming that task scope strongly drives synthetic code volume.
 
 ---
 
@@ -117,4 +117,4 @@ If you use this dataset or research in your work, please cite:
 
 ## 📜 License
 
-This project and dataset are released under the [MIT License](LICENSE).
+This project and dataset are released under the Full [MIT License](LICENSE).

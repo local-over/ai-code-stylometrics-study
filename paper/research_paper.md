@@ -14,7 +14,7 @@ This paper presents an empirical case study evaluating **76 zero-shot synthetic 
 
 Our quantitative analysis reveals statistically significant stylometric divergence: frontier synthetic implementations exhibit **+297% lines of code (LOC) expansion** ($\text{Mean} = 59.62 \pm 27.67$ LOC vs. $15.00 \pm 6.78$ LOC human, Mann-Whitney $U = 22.5$, Holm-Bonferroni $p_{\text{adj}} = 9.04 \times 10^{-6}$, rank-biserial effect size $r_{\text{rb}} = +0.941$), elevated comment density ($13.73\% \pm 11.47\%$ synthetic vs. $1.43\% \pm 4.52\%$ human, $p_{\text{adj}} = 0.0019$, $r_{\text{rb}} = +0.686$), higher explicit type annotation density ($13.13 \pm 11.72$ vs $1.50 \pm 1.35$, $p_{\text{adj}} = 0.0004$, $r_{\text{rb}} = +0.774$), and higher vertical whitespace ratios ($17.47\% \pm 4.88\%$ synthetic vs. $5.54\% \pm 6.95\%$ human, $p_{\text{adj}} = 0.0002$, $r_{\text{rb}} = +0.812$). All confidence intervals are computed via non-parametric 10,000-resample bootstrapping.
 
-Crucially, a **paired task-for-task sub-analysis** on identical prompt tasks demonstrates that when LLMs solve short, single-function reference prompts, synthetic LOC outputs ($13.14 \pm 5.26$ LOC) are statistically indistinguishable from human reference implementations ($15.00 \pm 6.78$ LOC, $U = 283.0, p = 0.5176$). This proves that the observed +297% LOC bloat in general task synthesis is driven by task scope expansion and structural micro-helper fragmentation (**89.5%** occurrence in frontier tasks).
+An intra-model task-complexity evaluation across the 76 frontier generations demonstrates that code length is strongly task-scope dependent: frontier models generating code for complex, multi-step tasks average $70.44 \pm 25.29$ LOC compared to $41.07 \pm 21.17$ LOC on focused tasks ($U = 247.0, p = 4.82 \times 10^{-6}$). Furthermore, on narrow single-function benchmark prompts, no statistically significant difference was detected between synthetic outputs and human code ($p = 0.5176$), demonstrating that synthetic LOC volume scales directly with prompt scope and structural micro-fragmentation (**89.5%** occurrence in frontier tasks).
 
 ---
 
@@ -60,14 +60,14 @@ To establish a human reference baseline free from potential LLM training contami
 We queried three frontier LLM architectures via stateless OpenRouter API calls using a standardized prompt template:
 - **System Prompt**: `"Write clean, production-quality code. Output only the code, no explanation."`
 - **Sampling Parameters**: Single-shot generation, deterministic sampling (`temperature = 0.0` / default minimum variance), `max_tokens = 750-800`.
-- **Uneven $N$ Allocation Methodological Rationale**: Because Gemini 3.5 Flash features a lower OpenRouter per-token pricing structure ($1.50/1M prompt, $9.00/1M completion) relative to GPT-5.6 Sol ($2.00/1M prompt, $10.00/1M completion) and Claude Sonnet 4.6 ($3.00/1M prompt, $15.00/1M completion), Gemini was allocated two independent runs per task-language pair ($N=38$), while GPT-5.6 Sol ($N=19$) and Claude Sonnet 4.6 ($N=19$) were allocated one run per pair to maximize dataset size within fixed API spending constraints.
+- **Uneven $N$ Allocation Methodological Rationale**: Because Gemini 3.5 Flash features a lower OpenRouter per-token pricing structure ($1.50/1M prompt, $9.00/1M completion) relative to GPT-5.6 Sol ($2.00/1M prompt, $10.00/1M completion) and Claude Sonnet 4.6 ($3.00/1M prompt, $15.00/1M completion), Gemini was allocated two independent runs per task-language pair ($N=38$), while GPT-5.6 Sol ($N=19$) and Claude Sonnet 4.6 ($N=19$) were allocated one run per pair to maximize dataset volume within fixed API spending constraints.
 - **Inter-Task and Inter-Model Variance**: Under `temperature = 0.0`, single-shot API outputs for a specific `(model, task)` pair are deterministic. The reported sample standard deviation ($\text{SD} = 27.67$ LOC) reflects **inter-task variance across 14 diverse algorithmic problems** and **inter-model variance across 3 model families**.
 
 ### 3.3 Dataset Breakdown & Exact Reconciliation ($N=136$ Total Records)
 To ensure 100% arithmetic transparency:
 - **Human Reference Baseline ($n=10$)**: 10 pre-AI reference library functions.
 - **Primary Frontier LLM Dataset ($N=76$)**: 76 zero-shot OpenRouter generations across Gemini ($N=38$), GPT ($N=19$), and Claude ($N=19$) across 14 tasks in Python and JavaScript.
-- **Secondary AI Benchmark Recreations ($N=50$)**: 50 pre-generated AI recreations produced for the 10 human benchmark prompts.
+- **Secondary AI Benchmark Recreations ($N=50$)**: 50 pre-generated AI recreations (5 versions per prompt) produced for the 10 human benchmark prompts.
 - **Total Dataset**: $10 + 76 + 50 = 136\text{ Master Records}$.
 
 ---
@@ -98,15 +98,17 @@ To evaluate inter-model differences across LLM providers, we report per-model me
 | **Anthropic Claude Sonnet 4.6** | $N=19$ | $73.53 \pm 19.76$ | **$11.23\% \pm 10.61\%$** | $19.84 \pm 14.21$ | $1.58 \pm 2.14$ |
 | **Kruskal-Wallis $H$-test** | — | $H = 8.93, \mathbf{p = 0.0115}$ | $H = 43.50, \mathbf{p = 3.58 \times 10^{-10}}$ | $H = 4.98, p = 0.0829$ | $H = 0.92, p = 0.6316$ |
 
-### 4.3 Secondary Benchmark Study: Pre-Generated AI Recreations ($N=50$)
-Separately from the frontier models, the secondary dataset of 50 pre-generated AI recreations (5 versions for each of the 10 human prompts) exhibited an average LOC of $13.14 \pm 5.21$ and comment density of $2.39\% \pm 6.21\%$. Because these recreations solved short 15-line prompt tasks, their structural metrics closely matched the brevity of the human reference implementations, demonstrating that prompt scope strongly influences synthetic LOC volume.
+### 4.3 Task Complexity Evaluation: Short vs. Complex Tasks Within Frontier LLMs ($N=76$)
+To isolate whether code bloat is driven by model behavior or task scope, we partitioned the 76 frontier generations by task complexity:
+- **Focused / Short Tasks ($N=28$)** (CSV Email, Interval Merge, Rotated Binary Search, Bracket Validation): $\text{Mean LOC} = 41.07 \pm 21.17$ LOC.
+- **Complex / Multi-Step Tasks ($N=48$)** (LRU Cache, Dijkstra, Token Bucket, Shunting-Yard, Trie, Palindrome, Exponential Backoff, Async Queue): $\text{Mean LOC} = 70.44 \pm 25.29$ LOC.
+- **Mann-Whitney U Test**: $U = 247.0, \mathbf{p = 4.82 \times 10^{-6}}$ (Rank-biserial effect size $r_{\text{rb}} = +0.632$).
+- **Takeaway**: Holding the model suite constant (Gemini, GPT, Claude), increasing task complexity produces a highly statistically significant **+71.5% LOC expansion ($p < 0.0001$)**, confirming that task scope strongly drives synthetic code volume.
 
-### 4.4 Paired Task-for-Task Sub-Analysis: Matched Prompts (`flow_01`–`flow_10`)
-To isolate the task-scope confound raised by task complexity differences, we performed a direct paired sub-analysis comparing human reference functions ($n=10$) against AI recreations solving the **exact same 10 prompt tasks**:
-- **Human Reference ($n=10$)**: $\text{LOC} = 15.00 \pm 6.78$ LOC, $\text{Comment Density} = 1.43\% \pm 4.52\%$.
-- **AI Recreations on Matched Prompts ($N=50$)**: $\text{LOC} = 13.14 \pm 5.26$ LOC, $\text{Comment Density} = 2.39\% \pm 6.27\%$.
-- **Mann-Whitney U Test**: $\text{LOC } U = 283.0, p = 0.5176$; $\text{Comment Density } U = 239.5, p = 0.7371$.
-- **Empirical Takeaway**: When LLMs solve narrow, single-function reference prompts (`flow_01`–`flow_10`), their LOC outputs are **statistically indistinguishable from human reference implementations ($p = 0.5176$)**. This proves conclusively that the **+297% LOC bloat** observed in the primary Frontier dataset ($N=76$) is driven by task scope expansion on broader multi-step research prompts (`task_01`–`task_10`) where LLMs introduce structural micro-helper fragmentation.
+### 4.4 Secondary Benchmark Study: Human Reference ($n=10$) vs. AI Recreations ($N=50$)
+Separately from the primary frontier model evaluations, we evaluated an auxiliary dataset of 50 pre-generated AI recreations (5 versions per prompt for `flow_01`–`flow_10`). Synthetic outputs averaged $13.14 \pm 5.21$ LOC and $2.39\% \pm 6.21\%$ comment density. 
+
+A Mann-Whitney U test between the human reference functions ($n=10$) and the benchmark recreations ($N=50$) yielded $p = 0.5176$ ($\text{LOC } U = 283.0$). **Statistical Power Note**: We emphasize that a non-significant $p$-value ($p > 0.05$) does not prove statistical equivalence, particularly given the modest statistical power of a small human reference sample ($n=10$). Rather, it indicates that no statistically significant difference was detected at the $\alpha = 0.05$ level, showing that on narrow single-function prompts, synthetic code does not exhibit the multi-fold LOC expansion observed in broad task synthesis.
 
 ---
 
@@ -154,16 +156,17 @@ Significant stylometric variance exists across the evaluated LLM families (align
 
 ## 8. Threats to Validity
 
-1. **Task Complexity & Scope Confound (Construct Validity)**: As revealed in our paired sub-analysis (Section 4.4), comparing general research task prompts against narrow 15-line standard library routines introduces a task-scope confound. When LLMs solve narrow prompts (`flow_01`–`flow_10`), their LOC output is concise ($13.14 \pm 5.26$ LOC vs $15.00 \pm 6.78$ human, $p = 0.5176$). The observed +297% LOC bloat in general synthesis is driven by task scope expansion and micro-helper fragmentation (89.5% rate) on broad tasks.
-2. **Human Baseline Selection Bias (Construct Validity)**: Our human reference sample ($n=10$) consists of production-hardened routines from legendary engineers. Comparing zero-shot LLM output against battle-tested open-source code measures the gap between zero-shot machine output and hardened software, not an average human developer.
-3. **Zero-Shot vs. Iterative Refinement (Internal Validity)**: LLMs were evaluated strictly in a single-shot setting. Multi-turn developer interaction, compiler feedback, and code review shrink this quality gap.
-4. **Sample Size & Uneven Allocation (Statistical Validity)**: While $N=76$ primary frontier generations provide high statistical power, the human sample ($n=10$) is small and Gemini was allocated 38 runs vs. 19 for GPT/Claude due to pricing constraints. We addressed this by applying non-parametric Mann-Whitney U tests, Holm-Bonferroni FWER corrections, Kruskal-Wallis inter-model tests, bootstrap 95% CIs, and rank-biserial effect sizes.
+1. **Task Complexity & Scope Confound (Construct Validity)**: Comparing general research task prompts against narrow 15-line standard library routines introduces a task-scope confound. Our intra-model task analysis (Section 4.3) confirms that holding the model suite constant, complex tasks generate significantly more LOC ($70.44 \pm 25.29$) than focused tasks ($41.07 \pm 21.17$, $p = 4.82 \times 10^{-6}$). Thus, the +297% LOC bloat in general task synthesis is driven by task scope expansion and structural micro-fragmentation (89.5% rate).
+2. **Statistical Equivalence vs. Non-Significance (Statistical Validity)**: As noted in Section 4.4, a non-significant $p$-value ($p = 0.5176$) does not prove statistical equivalence due to the limited statistical power of $n=10$ human reference samples. We report raw $p$-values, effect sizes, and bootstrap CIs to allow precise interpretation.
+3. **Human Baseline Selection Bias (Construct Validity)**: Our human reference sample ($n=10$) consists of production-hardened routines from legendary engineers. Comparing zero-shot LLM output against battle-tested open-source code measures the gap between zero-shot machine output and hardened software, not an average human developer.
+4. **Zero-Shot vs. Iterative Refinement (Internal Validity)**: LLMs were evaluated strictly in a single-shot setting. Multi-turn developer interaction, compiler feedback, and code review shrink this quality gap.
+5. **Sample Size & Uneven Allocation (Statistical Validity)**: While $N=76$ primary frontier generations provide high statistical power, Gemini was allocated 38 runs vs. 19 for GPT/Claude due to pricing constraints. We addressed this by applying non-parametric Mann-Whitney U tests, Holm-Bonferroni FWER corrections, Kruskal-Wallis inter-model tests, bootstrap 95% CIs, and rank-biserial effect sizes.
 
 ---
 
 ## 9. Conclusion
 
-This empirical case study demonstrates statistically significant stylometric differences between zero-shot LLM code and production-hardened human reference code. Synthetic code exhibits greater volume (+297% LOC expansion), higher comment density, and a strong bias toward structural micro-fragmentation (89.5% of primary frontier programs). Crucially, paired task-for-task analysis proves that LOC bloat is prompt-scope dependent. Recognizing these empirical characteristics provides valuable insights for automated code evaluation, static analysis tools, and LLM-assisted software engineering workflows.
+This empirical case study demonstrates statistically significant stylometric differences between zero-shot LLM code and production-hardened human reference code. Synthetic code exhibits greater volume (+297% LOC expansion), higher comment density, and a strong bias toward structural micro-fragmentation (89.5% of primary frontier programs). Crucially, task-complexity evaluations prove that LOC expansion is prompt-scope dependent. Recognizing these empirical characteristics provides valuable insights for automated code evaluation, static analysis tools, and LLM-assisted software engineering workflows.
 
 ---
 
