@@ -6,26 +6,18 @@ import time
 PYTHON_PATH = "/home/hassan/Desktop/zenodo_data/python_dataset.jsonl"
 JAVA_PATH = "/home/hassan/Desktop/zenodo_data/java_dataset.jsonl"
 PRIMARY_OUTPUT_PATH = "/home/hassan/Desktop/ai_code_stylometrics_study/dataset/layer1_stratified_samples.json"
-ALIAS_OUTPUT_PATH = "/home/hassan/Desktop/ai_code_stylometrics_study/dataset/stratified_outliers.json"
+METRICS_PATH = "/home/hassan/Desktop/ai_code_stylometrics_study/dataset/layer1_summary_metrics.json"
 
-def process_ingestion_and_sampling(limit_per_lang=None):
+def process_ingestion_and_sampling():
     print("=== LAYER 1: Ingestion & Stratified Sampling Agent ===")
     t0 = time.time()
-    all_stratified_samples = []
-    dataset_summary = {}
+    all_samples = []
+    summary = {}
 
     for path, lang in [(PYTHON_PATH, "python"), (JAVA_PATH, "java")]:
-        if not os.path.exists(path):
-            print(f"Dataset path {path} not found.")
-            continue
-
-        print(f"Ingesting {lang.upper()} dataset ({path})...")
-        t_lang_start = time.time()
-        rec_count = 0
-        lang_records = []
-        outlier_scores = []
-        
-        # Length accumulators
+        t_start = time.time()
+        records = []
+        scores = []
         h_lens, c_lens, d_lens, q_lens = [], [], [], []
 
         with open(path, "r", encoding="utf-8", errors="ignore") as f:
@@ -36,52 +28,50 @@ def process_ingestion_and_sampling(limit_per_lang=None):
                 except Exception:
                     continue
 
-                rec_count += 1
                 h_code = rec.get("human_code", "") or ""
                 c_code = rec.get("chatgpt_code", "") or ""
                 d_code = rec.get("dsc_code", "") or ""
                 q_code = rec.get("qwen_code", "") or ""
 
-                h_len = len(h_code)
-                c_len = len(c_code)
-                d_len = len(d_code)
-                q_len = len(q_code)
+                h_len, c_len, d_len, q_len = len(h_code), len(c_code), len(d_code), len(q_code)
 
                 h_lens.append(h_len)
                 c_lens.append(c_len)
                 d_lens.append(d_len)
                 q_lens.append(q_len)
 
-                # Outlier score based on length divergence across models (CV = std / mean)
                 lens = [h_len, c_len, d_len, q_len]
                 mean_len = float(np.mean(lens))
                 std_dev = float(np.std(lens))
-                divergence_ratio = std_dev / (mean_len + 1e-5)
+                cv = std_dev / (mean_len + 1e-5)
 
-                rec["lang"] = lang
-                rec["outlier_score"] = round(divergence_ratio, 4)
-                rec["h_len"] = h_len
-                rec["c_len"] = c_len
-                rec["d_len"] = d_len
-                rec["q_len"] = q_len
-                rec["mean_len"] = round(mean_len, 2)
-                rec["std_dev_len"] = round(std_dev, 2)
+                rec_item = {
+                    "hm_index": rec.get("hm_index"),
+                    "lang": lang,
+                    "docstring": rec.get("docstring", ""),
+                    "human_code": h_code,
+                    "chatgpt_code": c_code,
+                    "dsc_code": d_code,
+                    "qwen_code": q_code,
+                    "outlier_score": round(cv, 4),
+                    "h_len": h_len,
+                    "c_len": c_len,
+                    "d_len": d_len,
+                    "q_len": q_len,
+                    "mean_len": round(mean_len, 2),
+                    "std_dev_len": round(std_dev, 2)
+                }
+                scores.append(cv)
+                records.append(rec_item)
 
-                outlier_scores.append(divergence_ratio)
-                lang_records.append(rec)
+        t_end = time.time()
+        dur = round(t_end - t_start, 2)
+        scores_arr = np.array(scores)
 
-                if limit_per_lang and rec_count >= limit_per_lang:
-                    break
-
-        t_lang_end = time.time()
-        print(f"Loaded {len(lang_records):,} {lang.upper()} records in {t_lang_end - t_lang_start:.2f}s.")
-
-        # Compute dataset stats
-        scores_arr = np.array(outlier_scores)
-        summary_stats = {
-            "total_records": rec_count,
-            "total_snippets": rec_count * 4,
-            "ingestion_time_sec": round(t_lang_end - t_lang_start, 2),
+        summary[lang] = {
+            "total_tasks": len(records),
+            "total_snippets": len(records) * 4,
+            "ingestion_time_sec": dur,
             "outlier_score_mean": round(float(np.mean(scores_arr)), 4),
             "outlier_score_std": round(float(np.std(scores_arr)), 4),
             "outlier_score_median": round(float(np.median(scores_arr)), 4),
@@ -97,42 +87,33 @@ def process_ingestion_and_sampling(limit_per_lang=None):
                 "qwen": round(float(np.mean(q_lens)), 2)
             }
         }
-        dataset_summary[lang] = summary_stats
 
-        # Stratified sampling: 1,500 total per language (1,125 top outliers + 375 stratified controls)
-        lang_records.sort(key=lambda x: x["outlier_score"], reverse=True)
-        top_outliers = lang_records[:1125]
-        for r in top_outliers:
-            r["sample_type"] = "outlier"
+        # Sort by outlier score descending
+        records.sort(key=lambda x: x["outlier_score"], reverse=True)
+        outliers = records[:1125]
+        for r in outliers: r["sample_type"] = "outlier"
 
-        remaining_records = lang_records[1125:]
-        indices = np.linspace(0, len(remaining_records) - 1, 375, dtype=int)
-        controls = [remaining_records[i] for i in indices]
-        for r in controls:
-            r["sample_type"] = "control"
+        remaining = records[1125:]
+        ctrl_indices = np.linspace(0, len(remaining) - 1, 375, dtype=int)
+        controls = [remaining[i] for i in ctrl_indices]
+        for r in controls: r["sample_type"] = "control"
 
-        lang_samples = top_outliers + controls
-        all_stratified_samples.extend(lang_samples)
+        lang_samples = outliers + controls
+        all_samples.extend(lang_samples)
+        print(f"{lang.upper()} ingested {len(records):,} records in {dur}s. Picked {len(outliers)} outliers and {len(controls)} controls.")
 
-        print(f"Selected {len(lang_samples):,} stratified quadruplet records for {lang.upper()} (1,125 Outliers + 375 Controls).")
+    os.makedirs(os.path.dirname(PRIMARY_OUTPUT_PATH), exist_ok=True)
+    with open(PRIMARY_OUTPUT_PATH, "w", encoding="utf-8") as f:
+        json.dump(all_samples, f)
 
-    # Save output
-    for out_path in [PRIMARY_OUTPUT_PATH, ALIAS_OUTPUT_PATH]:
-        os.makedirs(os.path.dirname(out_path), exist_ok=True)
-        with open(out_path, "w", encoding="utf-8") as f:
-            json.dump(all_stratified_samples, f)
-        print(f"Saved {len(all_stratified_samples):,} stratified samples to {out_path} ({os.path.getsize(out_path) / (1024*1024):.2f} MB)")
+    total_dur = round(time.time() - t0, 2)
+    with open(METRICS_PATH, "w", encoding="utf-8") as f:
+        json.dump({"summary": summary, "sample_count": len(all_samples), "total_time_sec": total_dur}, f, indent=2)
 
-    total_time = round(time.time() - t0, 2)
-    print(f"=== Layer 1 Ingestion & Sampling Complete in {total_time}s ===")
-
-    # Write execution summary JSON alongside
-    summary_path = "/home/hassan/Desktop/ai_code_stylometrics_study/dataset/layer1_summary_metrics.json"
-    with open(summary_path, "w", encoding="utf-8") as f:
-        json.dump({"summary": dataset_summary, "sample_count": len(all_stratified_samples), "total_time_sec": total_time}, f, indent=2)
-
-    return dataset_summary, len(all_stratified_samples)
+    print(f"Done! Saved {len(all_samples):,} stratified quadruplets in {total_dur}s.")
+    return summary, all_samples
 
 if __name__ == "__main__":
     process_ingestion_and_sampling()
+
 
